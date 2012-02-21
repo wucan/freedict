@@ -6,6 +6,7 @@
 
 #include "fd-systray.h"
 #include "fd-stage.h"
+#include "fd-clipboard.h"
 
 
 /*
@@ -20,6 +21,8 @@
 
 int main(int argc, char **argv)
 {
+	XInitThreads();
+
 	gnome_program_init(PACKAGE, "1.0", LIBGNOMEUI_MODULE, argc, argv,
 		GNOME_PROGRAM_STANDARD_PROPERTIES,
 		GNOME_PARAM_APP_DATADIR,
@@ -31,6 +34,8 @@ int main(int argc, char **argv)
 	if(!gtk_widget_get_visible(stage)) {
 		gtk_widget_show_all(stage);
 	}
+
+	fd_clipboard_init();
 
 	gtk_main();
 
