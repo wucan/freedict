@@ -20,7 +20,33 @@ static struct fd_dict *cur_dict;
 
 static gchar * get_answer(const char *words)
 {
-	/* TODO */
+	GRegex *reg;
+	GMatchInfo *match_info;
+	gint start = -1, end = -1;
+	gchar pat[1024];
+
+	sprintf(pat, "\n%s\t", g_strstrip(words));
+	reg = g_regex_new(pat, 0, 0, NULL);
+	g_regex_match(reg, cur_dict->data, 0, &match_info);
+	while (g_match_info_matches(match_info)) {
+		gchar *word = g_match_info_fetch(match_info, 0);
+		g_match_info_fetch_pos(match_info, 0, &start, &end);
+		g_print("Found: %s, start %d, end %d\n", word, start, end);
+		g_free(word);
+		g_match_info_next(match_info, NULL);
+
+		/* use the first matched one! */
+		break;
+	}
+	g_match_info_free(match_info);
+	g_regex_unref(reg);
+
+	if (start > 0 && end > 0) {
+		int tail;
+		for (tail = end; cur_dict->data[tail] != '\n'; tail++)
+			;
+		return g_strndup(&cur_dict->data[start], tail - start);
+	}
 
 	return "Not Implement";
 }
