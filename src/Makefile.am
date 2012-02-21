@@ -8,6 +8,8 @@ freedict_CFLAGS=\
 	-I$(top_srcdir) -I$(top_builddir) \
 	$(GTK_CFLAGS) $(GNOME_CFLAGS)
 
+freedict_CFLAGS += -g
+
 #  uncomment the following if freedict requires the math library
 freedict_LDADD=$(GTK_LIBS) $(GNOME_LIBS) -lX11
 
