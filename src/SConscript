@@ -1,0 +1,12 @@
+Import('*')
+
+print "Build src ..."
+
+env=Environment()
+env.ParseConfig("pkg-config --cflags --libs cspi-1.0 libgnome-2.0 libgnomeui-2.0 gtk+-2.0")
+
+env['CFLAGS'] += ['-g', '-DHAVE_CONFIG_H=1', '-I../']
+
+env.Program(target = 'freedict', source = ['main.c', 'fd-systray.c',
+	'gdk_support.c', 'gtk_support.c', 'fd-window.c'])
+
