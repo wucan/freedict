@@ -5,6 +5,7 @@
 #include <gnome.h>
 
 #include "fd-systray.h"
+#include "fd-stage.h"
 
 
 /*
@@ -25,6 +26,11 @@ int main(int argc, char **argv)
 		PACKAGE_DATA_DIR, NULL);
 
 	fd_systray_create();
+
+	GtkWidget *stage = fd_stage_window_get(NULL);
+	if(!gtk_widget_get_visible(stage)) {
+		gtk_widget_show_all(stage);
+	}
 
 	gtk_main();
 
