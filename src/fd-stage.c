@@ -49,6 +49,14 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		window = GTK_WIDGET(gtk_builder_get_object(builder, "window_stage"));
 		gtk_window_set_screen(GTK_WINDOW(window), gtk_widget_get_screen(do_widget));
 		g_signal_connect(window, "destroy", G_CALLBACK (gtk_widget_destroyed), &window);
+		/*
+		 * always on top
+		 */
+		gtk_window_set_keep_above(GTK_WINDOW(window), TRUE);
+		if (gtk_widget_is_composited(window)) {
+			gdouble opacity = 0.2;
+			gtk_window_set_opacity(GTK_WINDOW(window), opacity);
+		}
 	}
 
 	return window;
