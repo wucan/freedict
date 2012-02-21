@@ -59,6 +59,17 @@ void fd_stage_init()
 	fd_stage_window_get(NULL);
 }
 
+static guint timer_id;
+
+static gboolean timeout_func(gpointer data)
+{
+	GtkWidget *stage = data;
+
+	gtk_widget_hide(stage);
+
+	return FALSE;
+}
+
 void fd_stage_show()
 {
 	GtkWidget *stage;
@@ -79,5 +90,12 @@ void fd_stage_show()
 	if(!gtk_widget_get_visible(stage)) {
 		gtk_widget_show_all(stage);
 	}
+
+	if (timer_id > 0) {
+		g_source_remove(timer_id);
+		timer_id = 0;
+	}
+
+	timer_id = g_timeout_add(5000, timeout_func, stage);
 }
 
