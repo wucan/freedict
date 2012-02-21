@@ -1,5 +1,36 @@
 #include <gtk/gtk.h>
 
+#include <X11/Xlib.h>
+
+
+/*
+ * get mouse position, in screen space
+ */
+static int get_mouse_position(int *x, int *y)
+{
+	Display *dsp = XOpenDisplay(NULL);
+	if (!dsp)
+		return -1;
+
+	int screenNumber = DefaultScreen(dsp);
+	XEvent event;
+
+	/* get info about current pointer position */
+	XQueryPointer(dsp, RootWindow(dsp, DefaultScreen(dsp)),
+		&event.xbutton.root, &event.xbutton.window,
+		&event.xbutton.x_root, &event.xbutton.y_root,
+		&event.xbutton.x, &event.xbutton.y, &event.xbutton.state);
+
+	printf("Mouse Coordinates: %d %d\n", event.xbutton.x, event.xbutton.y);
+
+	*x = event.xbutton.x;
+	*y = event.xbutton.y;
+
+	XCloseDisplay(dsp);
+
+	return 0;
+}
+
 
 static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 {
@@ -31,11 +62,21 @@ void fd_stage_init()
 void fd_stage_show()
 {
 	GtkWidget *stage;
+	int x, y;
 
 	g_print("stage: show ...\n");
 
 	stage = fd_stage_window_get(NULL);
-	if(stage && !gtk_widget_get_visible(stage)) {
+
+	/*
+	 * there are alterntive but too simple method to set window position:
+	 * gtk_window_set_position(GTK_WINDOW(stage), GTK_WIN_POS_MOUSE);
+	 * use _move() is the answer.
+	 */
+	get_mouse_position(&x, &y);
+	gtk_window_move(GTK_WINDOW(stage), x, y);
+
+	if(!gtk_widget_get_visible(stage)) {
 		gtk_widget_show_all(stage);
 	}
 }
