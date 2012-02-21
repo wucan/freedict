@@ -3,7 +3,7 @@
 
 
 void fd_stage_init();
-void fd_stage_show();
+void fd_stage_show(const gchar *text);
 
 
 #endif /* _FD_STAGE_H_ */

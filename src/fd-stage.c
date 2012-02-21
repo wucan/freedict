@@ -3,6 +3,8 @@
 #include <X11/Xlib.h>
 
 
+static GtkTextView *textview_content;
+
 /*
  * get mouse position, in screen space
  */
@@ -20,8 +22,6 @@ static int get_mouse_position(int *x, int *y)
 		&event.xbutton.root, &event.xbutton.window,
 		&event.xbutton.x_root, &event.xbutton.y_root,
 		&event.xbutton.x, &event.xbutton.y, &event.xbutton.state);
-
-	printf("Mouse Coordinates: %d %d\n", event.xbutton.x, event.xbutton.y);
 
 	*x = event.xbutton.x;
 	*y = event.xbutton.y;
@@ -57,6 +57,8 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 			gdouble opacity = 0.2;
 			gtk_window_set_opacity(GTK_WINDOW(window), opacity);
 		}
+
+		textview_content = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "textview_content"));
 	}
 
 	return window;
@@ -78,14 +80,25 @@ static gboolean timeout_func(gpointer data)
 	return FALSE;
 }
 
-void fd_stage_show()
+static void update_content(const gchar *text)
+{
+	GtkTextBuffer *text_buf;
+
+	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
+	gtk_text_buffer_set_text(text_buf, text, -1);
+}
+
+void fd_stage_show(const gchar *text)
 {
 	GtkWidget *stage;
 	int x, y;
 
-	g_print("stage: show ...\n");
-
 	stage = fd_stage_window_get(NULL);
+
+	/*
+	 * update contents
+	 */
+	update_content(text);
 
 	/*
 	 * there are alterntive but too simple method to set window position:

@@ -28,8 +28,7 @@ static void receiver_func(GtkClipboard *clipboard,
 		recv_text = g_strdup(text);
 
 	if (recv_text) {
-		g_print("clipboard text: %s\n", recv_text);
-		fd_stage_show();
+		fd_stage_show(recv_text);
 	}
 
 	rearm = TRUE;
