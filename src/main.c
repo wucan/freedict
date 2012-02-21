@@ -30,10 +30,7 @@ int main(int argc, char **argv)
 
 	fd_systray_create();
 
-	GtkWidget *stage = fd_stage_window_get(NULL);
-	if(!gtk_widget_get_visible(stage)) {
-		gtk_widget_show_all(stage);
-	}
+	fd_stage_init();
 
 	fd_clipboard_init();
 

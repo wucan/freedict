@@ -2,7 +2,8 @@
 #define _FD_STAGE_H_
 
 
-GtkWidget * fd_stage_window_get(GtkWidget *do_widget);
+void fd_stage_init();
+void fd_stage_show();
 
 
 #endif /* _FD_STAGE_H_ */

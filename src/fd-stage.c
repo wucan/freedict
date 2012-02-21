@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 
 
-GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
+static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 {
 	static GtkWidget *window = NULL;
 	GError *err = NULL;
@@ -21,5 +21,22 @@ GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 	}
 
 	return window;
+}
+
+void fd_stage_init()
+{
+	fd_stage_window_get(NULL);
+}
+
+void fd_stage_show()
+{
+	GtkWidget *stage;
+
+	g_print("stage: show ...\n");
+
+	stage = fd_stage_window_get(NULL);
+	if(stage && !gtk_widget_get_visible(stage)) {
+		gtk_widget_show_all(stage);
+	}
 }
 
