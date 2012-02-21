@@ -2,6 +2,8 @@
 
 #include <X11/Xlib.h>
 
+#include "fd-dict.h"
+
 
 static GtkTextView *textview_content;
 
@@ -83,9 +85,11 @@ static gboolean timeout_func(gpointer data)
 static void update_content(const gchar *text)
 {
 	GtkTextBuffer *text_buf;
+	char buf[1024];
 
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
-	gtk_text_buffer_set_text(text_buf, text, -1);
+	sprintf(buf, "%s\n%s", text, fd_dict_get_answer(text));
+	gtk_text_buffer_set_text(text_buf, buf, -1);
 }
 
 void fd_stage_show(const gchar *text)

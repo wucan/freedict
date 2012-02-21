@@ -7,6 +7,7 @@
 #include "fd-systray.h"
 #include "fd-stage.h"
 #include "fd-clipboard.h"
+#include "fd-dict.h"
 
 
 /*
@@ -27,6 +28,8 @@ int main(int argc, char **argv)
 		GNOME_PROGRAM_STANDARD_PROPERTIES,
 		GNOME_PARAM_APP_DATADIR,
 		PACKAGE_DATA_DIR, NULL);
+
+	fd_dict_init();
 
 	fd_systray_create();
 
