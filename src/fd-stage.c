@@ -53,6 +53,17 @@ void button_save_clicked(GtkWidget *widget,
 	g_free(content);
 }
 
+static void button_edit_clicked(GtkWidget *widget,
+			GdkEventButton *event, gpointer *data)
+{
+	gboolean editable;
+
+	editable = gtk_text_view_get_editable(textview_content);
+	gtk_text_view_set_editable(textview_content, !editable);
+
+	fd_stage_pin();
+}
+
 static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 {
 	static GtkWidget *window = NULL;
@@ -86,9 +97,12 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		/* FIXME: not working! */
 		/* gtk_builder_connect_signals(builder, NULL); */
 		GtkWidget *button_save = gtk_builder_get_object(builder, "button_save");
+		GtkWidget *button_edit = gtk_builder_get_object(builder, "button_edit");
 		entry_word = GTK_ENTRY(gtk_builder_get_object(builder, "entry_word"));
 		g_signal_connect(G_OBJECT(button_save), "clicked",
 			G_CALLBACK(button_save_clicked), NULL);
+		g_signal_connect(G_OBJECT(button_edit), "clicked",
+			G_CALLBACK(button_edit_clicked), NULL);
 	}
 
 	return window;
@@ -121,6 +135,8 @@ static void update_content(const gchar *text)
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
 	sprintf(buf, "%s", fd_dict_get_answer(text));
 	gtk_text_buffer_set_text(text_buf, buf, -1);
+
+	gtk_text_view_set_editable(textview_content, FALSE);
 }
 
 void fd_stage_show(const gchar *text)
@@ -153,5 +169,13 @@ void fd_stage_show(const gchar *text)
 	}
 
 	timer_id = g_timeout_add(5000, timeout_func, stage);
+}
+
+void fd_stage_pin()
+{
+	if (timer_id > 0) {
+		g_source_remove(timer_id);
+		timer_id = 0;
+	}
 }
 
