@@ -45,6 +45,9 @@ static gchar * do_conv(gchar *in_encode, gchar *in, gsize in_size)
 
 	g_iconv_close(iconv);
 
+	/* mark out stream end! */
+	*out = 0;
+
 	return out_head;
 }
 
