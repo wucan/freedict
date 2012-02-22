@@ -38,8 +38,8 @@ static void thread_func(gpointer data)
 {
 	while (TRUE) {
 		if (rearm) {
-			gtk_clipboard_request_text(clipboard, receiver_func, NULL);
 			rearm = FALSE;
+			gtk_clipboard_request_text(clipboard, receiver_func, NULL);
 		}
 		usleep(100000);
 	}
