@@ -109,10 +109,19 @@ gchar * fd_dict_get_answer(const gchar *words)
 	if (!answer) {
 		int words_len = strlen(words);
 		gchar *tmp_words = g_strdup(words);
-		int suffix_idx = 0;
+		int suffix_idx = -1;
 
 		do {
 			switch (suffix_idx) {
+			case -1:
+				if (g_str_has_suffix(tmp_words, "ies")) {
+					tmp_words[words_len - 2] = 0;
+					tmp_words[words_len - 3] = 'y';
+					answer = do_get_answer(tmp_words);
+					tmp_words[words_len - 2] = 'e';
+					tmp_words[words_len - 3] = 'i';
+				}
+				break;
 			case 0:
 				if (g_str_has_suffix(tmp_words, "s")) {
 					tmp_words[words_len - 1] = 0;
