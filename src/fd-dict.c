@@ -60,6 +60,10 @@ static gchar * get_answer(const char *words)
 
 	sprintf(pat, "\n%s\t", g_strstrip(words));
 	reg = g_regex_new(pat, 0, 0, NULL);
+	if (!reg) {
+		g_print("failed to create regex! words: %s\n", words);
+		return NULL;
+	}
 	g_regex_match(reg, cur_dict->data, 0, &match_info);
 	while (g_match_info_matches(match_info)) {
 		gchar *word = g_match_info_fetch(match_info, 0);
