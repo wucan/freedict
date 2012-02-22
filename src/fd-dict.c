@@ -117,6 +117,9 @@ gchar * fd_dict_get_answer(const gchar *words)
 				if (g_str_has_suffix(tmp_words, "s")) {
 					tmp_words[words_len - 1] = 0;
 					answer = do_get_answer(tmp_words);
+					/* continue search the answer from here! */
+					if (!answer)
+						 answer = fd_dict_get_answer(tmp_words);
 					tmp_words[words_len - 1] = 's';
 				}
 				break;
