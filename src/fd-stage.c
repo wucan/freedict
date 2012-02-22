@@ -3,9 +3,11 @@
 #include <X11/Xlib.h>
 
 #include "fd-dict.h"
+#include "fd-user-dict.h"
 
 
 static GtkTextView *textview_content;
+static GtkEntry *entry_word;
 
 /*
  * get mouse position, in screen space
@@ -36,6 +38,19 @@ static int get_mouse_position(int *x, int *y)
 void button_save_clicked(GtkWidget *widget,
 			GdkEventButton *event, gpointer *data)
 {
+	gchar *word, *content;
+	GtkTextBuffer *text_buf;
+	GtkTextIter start, end;
+
+	word = gtk_entry_get_text(entry_word);
+	text_buf = gtk_text_view_get_buffer(textview_content);
+	gtk_text_buffer_get_start_iter(text_buf, &start);
+	gtk_text_buffer_get_end_iter(text_buf, &end);
+	content = gtk_text_buffer_get_text(text_buf, &start, &end, FALSE);
+
+	fd_user_dict_add(word, content, "Unknown");
+
+	g_free(content);
 }
 
 static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
@@ -53,7 +68,8 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		}
 		gtk_builder_connect_signals(builder, NULL);
 		window = GTK_WIDGET(gtk_builder_get_object(builder, "window_stage"));
-		gtk_window_set_screen(GTK_WINDOW(window), gtk_widget_get_screen(do_widget));
+		if (do_widget)
+			gtk_window_set_screen(GTK_WINDOW(window), gtk_widget_get_screen(do_widget));
 		g_signal_connect(window, "destroy", G_CALLBACK (gtk_widget_destroyed), &window);
 		/*
 		 * always on top
@@ -70,6 +86,7 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		/* FIXME: not working! */
 		/* gtk_builder_connect_signals(builder, NULL); */
 		GtkWidget *button_save = gtk_builder_get_object(builder, "button_save");
+		entry_word = GTK_ENTRY(gtk_builder_get_object(builder, "entry_word"));
 		g_signal_connect(G_OBJECT(button_save), "clicked",
 			G_CALLBACK(button_save_clicked), NULL);
 	}
@@ -98,8 +115,11 @@ static void update_content(const gchar *text)
 	GtkTextBuffer *text_buf;
 	char buf[1024];
 
+	/* update entry_word */
+	gtk_entry_set_text(entry_word, text);
+	/* update textview_content */
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
-	sprintf(buf, "%s\n%s", text, fd_dict_get_answer(text));
+	sprintf(buf, "%s", fd_dict_get_answer(text));
 	gtk_text_buffer_set_text(text_buf, buf, -1);
 }
 
