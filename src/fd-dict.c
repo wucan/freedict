@@ -64,7 +64,6 @@ static gchar * get_answer(const char *words)
 	while (g_match_info_matches(match_info)) {
 		gchar *word = g_match_info_fetch(match_info, 0);
 		g_match_info_fetch_pos(match_info, 0, &start, &end);
-		g_print("Found: %s, start %d, end %d\n", word, start, end);
 		g_free(word);
 		g_match_info_next(match_info, NULL);
 
