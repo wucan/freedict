@@ -33,6 +33,7 @@ AC_SUBST([GTK_REQUIRED])
 dnl Check dependencies
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED gthread-2.0 gio-2.0 >= $GLIB_REQUIRED gdk-pixbuf-2.0)
 PKG_CHECK_MODULES(GNOME, libgnome-2.0 libgnomeui-2.0)
+PKG_CHECK_MODULES(SQLITE3, sqlite3)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 

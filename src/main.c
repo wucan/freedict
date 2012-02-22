@@ -8,6 +8,7 @@
 #include "fd-stage.h"
 #include "fd-clipboard.h"
 #include "fd-dict.h"
+#include "fd-user-dict.h"
 
 
 /*
@@ -41,6 +42,7 @@ int main(int argc, char **argv)
 		PACKAGE_DATA_DIR, NULL);
 
 	fd_dict_init();
+	fd_user_dict_open();
 
 	fd_systray_create();
 
@@ -49,6 +51,8 @@ int main(int argc, char **argv)
 	fd_clipboard_init();
 
 	gtk_main();
+
+	fd_user_dict_close();
 
 	return 0;
 }
