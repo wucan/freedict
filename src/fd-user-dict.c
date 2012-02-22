@@ -78,6 +78,10 @@ static gboolean word_exist(gchar *word, struct user_dict_record *r)
 		return FALSE;
 	}
 
+	/* FIXME: not exist if Count value invalidate! */
+	if (r->Count <= 0)
+		return FALSE;
+
 	return TRUE;
 }
 
