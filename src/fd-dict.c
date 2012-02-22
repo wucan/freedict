@@ -78,12 +78,30 @@ static gchar * get_answer(const char *words)
 		return do_conv(cur_dict->char_encode, &cur_dict->data[end], tail - end);
 	}
 
-	return "Not Implement";
+	return NULL;
 }
 
 gchar * fd_dict_get_answer(const gchar *words)
 {
-	return cur_dict->get_answer(words);
+	gchar *answer;
+
+	answer = cur_dict->get_answer(words);
+	if (!answer) {
+		gchar *w;
+		w = g_ascii_strdown(words, -1);
+		answer = cur_dict->get_answer(w);
+		g_free(w);
+		if (!answer) {
+			w = g_ascii_strup(words, -1);
+			answer = cur_dict->get_answer(w);
+			g_free(w);
+		}
+	}
+
+	if (!answer)
+		return g_strdup("Not Found!");
+
+	return answer;
 }
 
 static struct fd_dict * fd_dict_load_dict(gchar *uri)
