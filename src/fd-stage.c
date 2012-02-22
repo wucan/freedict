@@ -33,6 +33,10 @@ static int get_mouse_position(int *x, int *y)
 	return 0;
 }
 
+void button_save_clicked(GtkWidget *widget,
+			GdkEventButton *event, gpointer *data)
+{
+}
 
 static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 {
@@ -61,6 +65,9 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		}
 
 		textview_content = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "textview_content"));
+
+		/* hook up signals */
+		gtk_builder_connect_signals(builder, NULL);
 	}
 
 	return window;

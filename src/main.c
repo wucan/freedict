@@ -24,6 +24,17 @@ int main(int argc, char **argv)
 {
 	XInitThreads();
 
+	/* GtkBuilder signals need this */
+	GModule *mod = g_module_open(NULL, G_MODULE_BIND_LOCAL);
+	if (!mod) {
+		g_print("module open failed!\n");
+	}
+	gpointer method;
+	g_module_symbol(mod, "button_save_clicked", &method);
+	if (method) {
+		g_print("found method %p\n", method);
+	}
+
 	gnome_program_init(PACKAGE, "1.0", LIBGNOMEUI_MODULE, argc, argv,
 		GNOME_PROGRAM_STANDARD_PROPERTIES,
 		GNOME_PARAM_APP_DATADIR,
