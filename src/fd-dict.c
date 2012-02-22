@@ -141,6 +141,17 @@ gchar * fd_dict_get_answer(const gchar *words)
 					tmp_words[words_len - 2] = 'e';
 				}
 				break;
+			case 3:
+				if (g_str_has_suffix(tmp_words, "ing")) {
+					tmp_words[words_len - 1] = 0;
+					tmp_words[words_len - 2] = 0;
+					tmp_words[words_len - 3] = 0;
+					answer = do_get_answer(tmp_words);
+					tmp_words[words_len - 1] = 'g';
+					tmp_words[words_len - 2] = 'n';
+					tmp_words[words_len - 3] = 'i';
+				}
+				break;
 			default:
 				answer = g_strdup("Not Found!");
 				break;
