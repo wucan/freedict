@@ -3,6 +3,7 @@
 
 struct fd_dict {
 	gchar *uri;
+	gchar *char_encode;
 	gchar *data;
 	gsize size;
 
@@ -17,6 +18,35 @@ struct fd_dict_box {
 static struct fd_dict_box dict_box;
 static struct fd_dict *cur_dict;
 
+static void hex_dump(const gchar *prefix, guchar *buf, int size)
+{
+	int i;
+
+	if (size < 0)
+		return;
+	g_print("%s:", prefix);
+	for (i = 0; i < size; i++)
+		g_print(" %02x", buf[i]);
+	g_print("\n");
+}
+
+static gchar * do_conv(gchar *in_encode, gchar *in, gsize in_size)
+{
+	GIConv iconv = g_iconv_open("UTF-8", in_encode);
+	if (iconv == (GIConv)-1)
+		return g_strdup("Unknow raw input text!");
+
+	gsize out_size = in_size * 2;
+	gsize out_left = out_size;
+	gchar *out = g_malloc(out_size);
+	gchar *out_head = out;
+
+	g_iconv(iconv, &in, &in_size, &out, &out_left);
+
+	g_iconv_close(iconv);
+
+	return out_head;
+}
 
 static gchar * get_answer(const char *words)
 {
@@ -45,7 +75,7 @@ static gchar * get_answer(const char *words)
 		int tail;
 		for (tail = end; cur_dict->data[tail] != '\n'; tail++)
 			;
-		return g_strndup(&cur_dict->data[start], tail - start);
+		return do_conv(cur_dict->char_encode, &cur_dict->data[end], tail - end);
 	}
 
 	return "Not Implement";
@@ -67,6 +97,7 @@ static struct fd_dict * fd_dict_load_dict(gchar *uri)
 	 */
 	dict = (struct fd_dict *)g_malloc0(sizeof(*dict));
 	dict->uri = g_strdup(uri);
+	dict->char_encode = "GB18030";
 	rb = g_file_get_contents(uri, &dict->data, &dict->size, &err);
 	if (!rb) {
 		if (err) {
