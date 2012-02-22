@@ -81,7 +81,7 @@ static gchar * get_answer(const char *words)
 	return NULL;
 }
 
-gchar * fd_dict_get_answer(const gchar *words)
+static gchar * do_get_answer(const gchar *words)
 {
 	gchar *answer;
 
@@ -98,8 +98,55 @@ gchar * fd_dict_get_answer(const gchar *words)
 		}
 	}
 
-	if (!answer)
-		return g_strdup("Not Found!");
+	return answer;
+}
+
+gchar * fd_dict_get_answer(const gchar *words)
+{
+	gchar *answer;
+
+	answer = do_get_answer(words);
+	if (!answer) {
+		int words_len = strlen(words);
+		gchar *tmp_words = g_strdup(words);
+		int suffix_idx = 0;
+
+		do {
+			switch (suffix_idx) {
+			case 0:
+				if (g_str_has_suffix(tmp_words, "s")) {
+					tmp_words[words_len - 1] = 0;
+					answer = do_get_answer(tmp_words);
+					tmp_words[words_len - 1] = 's';
+				}
+				break;
+			case 1:
+				if (g_str_has_suffix(tmp_words, "es")) {
+					tmp_words[words_len - 1] = 0;
+					tmp_words[words_len - 2] = 0;
+					answer = do_get_answer(tmp_words);
+					tmp_words[words_len - 1] = 's';
+					tmp_words[words_len - 2] = 'e';
+				}
+				break;
+			case 2:
+				if (g_str_has_suffix(tmp_words, "er")) {
+					tmp_words[words_len - 1] = 0;
+					tmp_words[words_len - 2] = 0;
+					answer = do_get_answer(tmp_words);
+					tmp_words[words_len - 1] = 'r';
+					tmp_words[words_len - 2] = 'e';
+				}
+				break;
+			default:
+				answer = g_strdup("Not Found!");
+				break;
+			}
+			suffix_idx++;
+		} while (!answer);
+done:
+		g_free(tmp_words);
+	}
 
 	return answer;
 }
