@@ -152,6 +152,13 @@ gchar * fd_dict_get_answer(const gchar *words)
 					tmp_words[words_len - 3] = 'i';
 				}
 				break;
+			case 4:
+				if (g_str_has_suffix(tmp_words, "ed")) {
+					tmp_words[words_len - 1] = 0;
+					answer = do_get_answer(tmp_words);
+					tmp_words[words_len - 1] = 'd';
+				}
+				break;
 			default:
 				answer = g_strdup("Not Found!");
 				break;
