@@ -12,7 +12,7 @@ static GtkEntry *entry_word;
 /*
  * get mouse position, in screen space
  */
-static int get_mouse_position(int *x, int *y)
+static int x11_mouse_position(int *x, int *y)
 {
 	Display *dsp = XOpenDisplay(NULL);
 	if (!dsp)
@@ -31,6 +31,16 @@ static int get_mouse_position(int *x, int *y)
 	*y = event.xbutton.y;
 
 	XCloseDisplay(dsp);
+
+	return 0;
+}
+
+static int gdk_get_mouse_position(int *x, int *y)
+{
+	GdkDisplay *display = gdk_display_get_default();
+
+	/* get cursor position */
+	gdk_display_get_pointer(display, NULL, x, y, NULL);
 
 	return 0;
 }
@@ -160,7 +170,7 @@ void fd_stage_show(const gchar *text)
 	 * gtk_window_set_position(GTK_WINDOW(stage), GTK_WIN_POS_MOUSE);
 	 * use _move() is the answer.
 	 */
-	get_mouse_position(&x, &y);
+	gdk_get_mouse_position(&x, &y);
 	gtk_window_move(GTK_WINDOW(stage), x, y);
 
 	if(!gtk_widget_get_visible(stage)) {
