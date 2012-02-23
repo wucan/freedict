@@ -180,7 +180,7 @@ done:
 	return answer;
 }
 
-gchar * fd_dict_get_answer(const gchar *words)
+gboolean fd_dict_get_answer(struct fd_lookup_context *lookup_ctx)
 {
 	gchar *dup_words;
 	gchar *answer = NULL;
@@ -192,7 +192,7 @@ gchar * fd_dict_get_answer(const gchar *words)
 	/*
 	 * NOTE: g_strstrip() don't create new one!
 	 */
-	dup_words = g_strdup(words);
+	dup_words = g_strdup(lookup_ctx->words);
 	tmp_words = g_strstrip(dup_words);
 	len = strlen(tmp_words);
 
@@ -222,7 +222,9 @@ gchar * fd_dict_get_answer(const gchar *words)
 
 	g_free(dup_words);
 
-	return answer;
+	lookup_ctx->result_answer = answer;
+
+	return TRUE;
 }
 
 static struct fd_dict * fd_dict_load_dict(gchar *uri)

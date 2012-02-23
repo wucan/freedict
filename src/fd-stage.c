@@ -4,6 +4,7 @@
 
 #include "fd-dict.h"
 #include "fd-user-dict.h"
+#include "fd-lookup.h"
 
 
 static GtkTextView *textview_content;
@@ -167,18 +168,22 @@ static void update_content(const gchar *text)
 	GtkTextBuffer *text_buf;
 	char buf[1024];
 	gchar *answer;
+	struct fd_lookup_context lookup_ctx = {0};
+
+	fd_lookup_context_init(&lookup_ctx, text);
 
 	/* update entry_word */
 	gtk_entry_set_text(entry_word, text);
 	/* update textview_content */
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
-	answer = fd_dict_get_answer(text);
+	fd_dict_get_answer(&lookup_ctx);
+	answer = fd_lookup_context_build_answer(&lookup_ctx);
 	sprintf(buf, "%s", answer);
 	gtk_text_buffer_set_text(text_buf, buf, -1);
 
 	gtk_text_view_set_editable(textview_content, FALSE);
 
-	g_free(answer);
+	fd_lookup_context_destroy(&lookup_ctx);
 }
 
 void fd_stage_show(const gchar *text)

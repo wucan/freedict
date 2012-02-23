@@ -15,6 +15,13 @@ struct fd_user_dict_record {
 	int Count;
 };
 
+struct fd_lookup_context {
+	/* input data */
+	gchar *words;
+
+	gchar *result_answer;
+};
+
 
 #endif /* _FD_COMMON_H_ */
 
