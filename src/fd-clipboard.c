@@ -14,6 +14,17 @@ static gboolean rearm = TRUE;
 static void receiver_func(GtkClipboard *clipboard,
 		const gchar *text, gpointer data)
 {
+	/*
+	 * defer if still in selection
+	 */
+	GdkModifierType modifier;
+	GdkDisplay *display = gdk_display_get_default();
+	gdk_display_get_pointer(display, NULL, NULL, NULL, &modifier);
+	if (modifier & GDK_BUTTON1_MASK) {
+		rearm = TRUE;
+		return;
+	}
+
 	if (text && recv_text && strcmp(recv_text, text) == 0) {
 		rearm = TRUE;
 		return;
