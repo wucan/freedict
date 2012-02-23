@@ -128,15 +128,19 @@ static void update_content(const gchar *text)
 {
 	GtkTextBuffer *text_buf;
 	char buf[1024];
+	gchar *answer;
 
 	/* update entry_word */
 	gtk_entry_set_text(entry_word, text);
 	/* update textview_content */
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
-	sprintf(buf, "%s", fd_dict_get_answer(text));
+	answer = fd_dict_get_answer(text);
+	sprintf(buf, "%s", answer);
 	gtk_text_buffer_set_text(text_buf, buf, -1);
 
 	gtk_text_view_set_editable(textview_content, FALSE);
+
+	g_free(answer);
 }
 
 void fd_stage_show(const gchar *text)
