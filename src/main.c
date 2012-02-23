@@ -2,6 +2,8 @@
 #include "config.h"
 #endif
 
+#include <X11/Xlib.h>
+
 #include <gnome.h>
 
 #include "fd-systray.h"
@@ -23,7 +25,11 @@
 
 int main(int argc, char **argv)
 {
-	XInitThreads();
+	Status status = XInitThreads();
+	if (!status) {
+		g_print("XInitThreads() failed!\n");
+		exit(EXIT_FAILURE);
+	}
 
 	/* GtkBuilder signals need this */
 	GModule *mod = g_module_open(NULL, G_MODULE_BIND_LOCAL);
