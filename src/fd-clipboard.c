@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
 
+#include "fd-utils.h"
+
 
 static GtkClipboard *clipboard;
 
@@ -51,7 +53,9 @@ static void receiver_func(GtkClipboard *clipboard,
 		recv_text = g_strdup(text);
 
 	if (recv_text) {
-		fd_stage_show(recv_text);
+		gchar *context = fd_utils_get_active_window_title();
+		fd_stage_show(recv_text, context);
+		g_free(context);
 	}
 
 	rearm = TRUE;

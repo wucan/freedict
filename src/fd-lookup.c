@@ -5,9 +5,11 @@
 #include "fd-str.h"
 
 
-void fd_lookup_context_init(struct fd_lookup_context *ctx, const gchar *words)
+void fd_lookup_context_init(struct fd_lookup_context *ctx,
+		const gchar *words, const gchar *context)
 {
 	ctx->words = words;
+	ctx->context = context;
 }
 
 void fd_lookup_context_destroy(struct fd_lookup_context *ctx)

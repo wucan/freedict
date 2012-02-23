@@ -27,6 +27,7 @@ struct fd_dict_record {
 struct fd_lookup_context {
 	/* input data */
 	gchar *words;
+	gchar *context;
 
 	gchar *result_answer;
 

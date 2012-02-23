@@ -170,14 +170,14 @@ static gboolean timeout_func(gpointer data)
 	return TRUE;
 }
 
-static void update_content(const gchar *text)
+static void update_content(const gchar *text, const gchar *context)
 {
 	GtkTextBuffer *text_buf;
 	char buf[1024];
 	gchar *answer;
 	struct fd_lookup_context lookup_ctx = {0};
 
-	fd_lookup_context_init(&lookup_ctx, text);
+	fd_lookup_context_init(&lookup_ctx, text, context);
 
 	/* update entry_word */
 	gtk_entry_set_text(entry_word, text);
@@ -191,7 +191,7 @@ static void update_content(const gchar *text)
 	fd_lookup_context_destroy(&lookup_ctx);
 }
 
-void fd_stage_show(const gchar *text)
+void fd_stage_show(const gchar *text, const gchar *context)
 {
 	GtkWidget *stage;
 	int x, y;
@@ -211,7 +211,7 @@ void fd_stage_show(const gchar *text)
 	/*
 	 * update contents
 	 */
-	update_content(text);
+	update_content(text, context);
 
 	if (!is_mouse_nearby_stage_window(stage)) {
 		/*
