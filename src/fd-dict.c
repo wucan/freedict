@@ -189,13 +189,18 @@ done:
 
 gchar * fd_dict_get_answer(const gchar *words)
 {
+	gchar *dup_words;
 	gchar *answer = NULL;
 	gchar *tmp_words;
 	gchar *cwords;
 	int len;
 	int i;
 
-	tmp_words = g_strstrip(words);
+	/*
+	 * NOTE: g_strstrip() don't create new one!
+	 */
+	dup_words = g_strdup(words);
+	tmp_words = g_strstrip(dup_words);
 	len = strlen(tmp_words);
 
 	/* remove leading evil chars */
@@ -222,7 +227,7 @@ gchar * fd_dict_get_answer(const gchar *words)
 	else
 		answer = g_strdup("Not Found!");
 
-	g_free(tmp_words);
+	g_free(dup_words);
 
 	return answer;
 }
