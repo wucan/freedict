@@ -2,6 +2,7 @@
 
 #include "fd-common.h"
 #include "fd-dict.h"
+#include "fd-str.h"
 
 
 void fd_lookup_context_init(struct fd_lookup_context *ctx, const gchar *words)
@@ -141,16 +142,20 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 	}
 
 	if (cwords[0]) {
+		int feature = fd_str_get_feature(cwords);
+
 		answer = do_lookup(lookup_ctx, cwords);
 		/*
 		 * continue to lookup through strdown and then strup
 		 */
 		if (!answer) {
 			gchar *w;
-			w = g_ascii_strdown(cwords, -1);
-			answer = do_lookup(lookup_ctx, w);
-			g_free(w);
-			if (!answer) {
+			if (feature != FD_STR_FEATURE_ALL_LOWER) {
+				w = g_ascii_strdown(cwords, -1);
+				answer = do_lookup(lookup_ctx, w);
+				g_free(w);
+			}
+			if (!answer && (feature != FD_STR_FEATURE_ALL_UPPER)) {
 				/* strup should direct call the dict */
 				w = g_ascii_strup(cwords, -1);
 				answer = fd_dict_get_answer(w);
