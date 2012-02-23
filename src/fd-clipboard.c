@@ -24,7 +24,7 @@ static void receiver_func(GtkClipboard *clipboard,
 		recv_text = NULL;
 	}
 
-	if (text)
+	if (text && text[0])
 		recv_text = g_strdup(text);
 
 	if (recv_text) {
