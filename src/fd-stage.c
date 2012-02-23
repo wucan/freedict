@@ -9,6 +9,7 @@
 
 static GtkTextView *textview_content;
 static GtkEntry *entry_word;
+static GtkWidget *button_edit;
 
 /*
  * get mouse position, in screen space
@@ -93,10 +94,16 @@ static void button_edit_clicked(GtkWidget *widget,
 {
 	gboolean editable;
 
-	editable = gtk_text_view_get_editable(textview_content);
-	gtk_text_view_set_editable(textview_content, !editable);
+	editable = !gtk_text_view_get_editable(textview_content);
+	gtk_text_view_set_editable(textview_content, editable);
 
-	fd_stage_pin();
+	if (editable) {
+		gtk_button_set_label(GTK_BUTTON(widget), "Editing");
+		fd_stage_pin();
+	} else {
+		gtk_button_set_label(GTK_BUTTON(widget), "Edit");
+		fd_stage_unpin();
+	}
 }
 
 static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
@@ -132,7 +139,7 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		/* FIXME: not working! */
 		/* gtk_builder_connect_signals(builder, NULL); */
 		GtkWidget *button_save = gtk_builder_get_object(builder, "button_save");
-		GtkWidget *button_edit = gtk_builder_get_object(builder, "button_edit");
+		button_edit = gtk_builder_get_object(builder, "button_edit");
 		entry_word = GTK_ENTRY(gtk_builder_get_object(builder, "entry_word"));
 		g_signal_connect(G_OBJECT(button_save), "clicked",
 			G_CALLBACK(button_save_clicked), NULL);
@@ -181,8 +188,6 @@ static void update_content(const gchar *text)
 	sprintf(buf, "%s", answer);
 	gtk_text_buffer_set_text(text_buf, buf, -1);
 
-	gtk_text_view_set_editable(textview_content, FALSE);
-
 	fd_lookup_context_destroy(&lookup_ctx);
 }
 
@@ -197,6 +202,11 @@ void fd_stage_show(const gchar *text)
 	if (gtk_widget_get_visible(stage) &&
 		gtk_text_view_get_editable(textview_content))
 		return;
+
+	if (gtk_text_view_get_editable(textview_content)) {
+		gtk_button_set_label(GTK_BUTTON(button_edit), "Edit");
+		gtk_text_view_set_editable(textview_content, FALSE);
+	}
 
 	/*
 	 * update contents
