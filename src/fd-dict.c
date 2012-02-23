@@ -58,7 +58,7 @@ static gchar * get_answer(const char *words)
 	gint start = -1, end = -1;
 	gchar pat[1024];
 
-	sprintf(pat, "\n%s\t", g_strstrip(words));
+	sprintf(pat, "\n%s\t", words);
 	reg = g_regex_new(pat, 0, 0, NULL);
 	if (!reg) {
 		g_print("failed to create regex! words: %s\n", words);
@@ -107,7 +107,7 @@ static gchar * do_get_answer(const gchar *words)
 	return answer;
 }
 
-gchar * fd_dict_get_answer(const gchar *words)
+static gchar * _fd_dict_get_answer(const gchar *words)
 {
 	gchar *answer;
 
@@ -134,7 +134,7 @@ gchar * fd_dict_get_answer(const gchar *words)
 					answer = do_get_answer(tmp_words);
 					/* continue search the answer from here! */
 					if (!answer)
-						 answer = fd_dict_get_answer(tmp_words);
+						 answer = _fd_dict_get_answer(tmp_words);
 					tmp_words[words_len - 1] = 's';
 				}
 				break;
@@ -183,6 +183,44 @@ gchar * fd_dict_get_answer(const gchar *words)
 done:
 		g_free(tmp_words);
 	}
+
+	return answer;
+}
+
+gchar * fd_dict_get_answer(const gchar *words)
+{
+	gchar *answer = NULL;
+	gchar *tmp_words;
+	gchar *cwords;
+	int len;
+	int i;
+
+	tmp_words = g_strstrip(words);
+	len = strlen(tmp_words);
+
+	/* remove leading evil chars */
+	for (i = 0; i < len; i++) {
+		if (g_ascii_ispunct(tmp_words[i]) || !g_ascii_isgraph(tmp_words[i]))
+			tmp_words[i] = 0;
+		else
+			break;
+	}
+
+	cwords = &tmp_words[i];
+	len = strlen(cwords);
+
+	/* remove trailling evil chars */
+	for (i = len - 1; i >= 0; i--) {
+		if (g_ascii_ispunct(cwords[i]) || !g_ascii_isgraph(cwords[i]))
+			cwords[i] = 0;
+		else
+			break;
+	}
+
+	if (cwords[0])
+		answer = _fd_dict_get_answer(cwords);
+
+	g_free(tmp_words);
 
 	return answer;
 }
