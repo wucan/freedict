@@ -193,6 +193,11 @@ void fd_stage_show(const gchar *text)
 
 	stage = fd_stage_window_get(NULL);
 
+	/* ignore new coming if current in editable mode */
+	if (gtk_widget_get_visible(stage) &&
+		gtk_text_view_get_editable(textview_content))
+		return;
+
 	/*
 	 * update contents
 	 */
