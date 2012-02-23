@@ -3,7 +3,7 @@ freedict_SOURCES=main.c fd-systray.c fd-systray.h \
 	fd-window.c fd-window.h \
 	gtk_support.c gtk_support.h gdk_support.c gdk_support.h \
 	fd-stage.c fd-clipboard.c fd-dict.c fd-user-dict.c fd-lookup.c \
-	fd-str.c
+	fd-str.c fd-utils.c
 
 freedict_CFLAGS=\
 	-I$(top_srcdir) -I$(top_builddir) \
