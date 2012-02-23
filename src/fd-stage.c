@@ -115,7 +115,7 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		window = GTK_WIDGET(gtk_builder_get_object(builder, "window_stage"));
 		if (do_widget)
 			gtk_window_set_screen(GTK_WINDOW(window), gtk_widget_get_screen(do_widget));
-		g_signal_connect(window, "destroy", G_CALLBACK (gtk_widget_destroyed), &window);
+		g_signal_connect(window, "delete-event", G_CALLBACK (gtk_widget_hide_on_delete), window);
 		/*
 		 * always on top
 		 */
