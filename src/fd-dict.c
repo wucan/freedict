@@ -100,7 +100,8 @@ static gchar * do_get_answer(const gchar *words)
 	return answer;
 }
 
-static gchar * _fd_dict_get_answer(const gchar *words)
+static gchar * _fd_dict_get_answer(struct fd_loookup_context *lookup_ctx,
+		gchar *words)
 {
 	gchar *answer;
 
@@ -127,7 +128,7 @@ static gchar * _fd_dict_get_answer(const gchar *words)
 					answer = do_get_answer(tmp_words);
 					/* continue search the answer from here! */
 					if (!answer)
-						 answer = _fd_dict_get_answer(tmp_words);
+						 answer = _fd_dict_get_answer(lookup_ctx, tmp_words);
 					tmp_words[words_len - 1] = 's';
 				}
 				break;
@@ -216,7 +217,7 @@ gboolean fd_dict_get_answer(struct fd_lookup_context *lookup_ctx)
 	}
 
 	if (cwords[0])
-		answer = _fd_dict_get_answer(cwords);
+		answer = _fd_dict_get_answer(lookup_ctx, cwords);
 	else
 		answer = g_strdup("Not Found!");
 
