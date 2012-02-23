@@ -1,14 +1,7 @@
 #include <glib.h>
 
+#include "fd-common.h"
 
-struct fd_dict {
-	gchar *uri;
-	gchar *char_encode;
-	gchar *data;
-	gsize size;
-
-	gchar * (*get_answer)(const gchar *words);
-};
 
 struct fd_dict_box {
 	GList *dicts;

@@ -2,12 +2,11 @@
 
 #include <sqlite3.h>
 
+#include "fd-common.h"
+
 
 #define DB_FILE			"../data/fd.db3"
 
-struct user_dict_record {
-	int Count;
-};
 
 static sqlite3 *db;
 
@@ -36,7 +35,7 @@ void fd_user_dict_close()
 static int select_callback(void *data, int argc, char **argv, char **colname)
 {
 	int i;
-	struct user_dict_record *r = (struct user_dict_record *)data;
+	struct fd_user_dict_record *r = (struct fd_user_dict_record *)data;
 
 	g_print("sqlite3 select callback\n");
 	for (i = 0; i < argc; i++) {
@@ -62,7 +61,7 @@ static int insert_callback(void *data, int argc, char **argv, char *colname)
 	return 0;
 }
 
-static gboolean word_exist(gchar *word, struct user_dict_record *r)
+static gboolean word_exist(gchar *word, struct fd_user_dict_record *r)
 {
 	int rc;
 	char sql[1024];
@@ -91,7 +90,7 @@ int fd_user_dict_add(gchar *word, gchar *answer, gchar *context)
 	int count;
 	char sql[1024];
 	char *errmsg = NULL;
-	struct user_dict_record r;
+	struct fd_user_dict_record r;
 
 	if (!db)
 		return -1;
