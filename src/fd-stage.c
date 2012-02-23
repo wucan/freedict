@@ -213,13 +213,15 @@ void fd_stage_show(const gchar *text)
 	 */
 	update_content(text);
 
-	/*
-	 * there are alterntive but too simple method to set window position:
-	 * gtk_window_set_position(GTK_WINDOW(stage), GTK_WIN_POS_MOUSE);
-	 * use _move() is the answer.
-	 */
-	gdk_get_mouse_position(&x, &y);
-	gtk_window_move(GTK_WINDOW(stage), x, y);
+	if (!is_mouse_nearby_stage_window(stage)) {
+		/*
+		 * there are alterntive but too simple method to set window position:
+		 * gtk_window_set_position(GTK_WINDOW(stage), GTK_WIN_POS_MOUSE);
+		 * use _move() is the answer.
+		 */
+		gdk_get_mouse_position(&x, &y);
+		gtk_window_move(GTK_WINDOW(stage), x, y);
+	}
 
 	if(!gtk_widget_get_visible(stage)) {
 		gtk_widget_show_all(stage);
