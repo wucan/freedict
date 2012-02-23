@@ -45,6 +45,30 @@ static int gdk_get_mouse_position(int *x, int *y)
 	return 0;
 }
 
+static gboolean is_mouse_nearby_stage_window(GtkWidget *stage)
+{
+	gint x, y;
+	gint win_x, win_y, win_w, win_h;
+	GdkDisplay *display;
+	GdkWindow *window;
+
+	if(!gtk_widget_get_visible(stage))
+		return FALSE;
+
+	display = gdk_display_get_default();
+	gdk_display_get_pointer(display, NULL, &x, &y, NULL);
+
+	gtk_window_get_position(GTK_WINDOW(stage), &win_x, &win_y);
+	gtk_window_get_size(GTK_WINDOW(stage), &win_w, &win_h);
+
+	GdkRectangle win_rect = {win_x, win_y, win_w, win_h};
+	GdkRectangle mouse_rect = {x - 5, y - 5, 10, 10};
+	if (gdk_rectangle_intersect(&win_rect, &mouse_rect, NULL))
+		return TRUE;
+	else
+		return FALSE;
+}
+
 void button_save_clicked(GtkWidget *widget,
 			GdkEventButton *event, gpointer *data)
 {
@@ -129,9 +153,13 @@ static gboolean timeout_func(gpointer data)
 {
 	GtkWidget *stage = data;
 
-	gtk_widget_hide(stage);
+	if (!is_mouse_nearby_stage_window(stage)) {
+		gtk_widget_hide(stage);
+		timer_id = 0;
+		return FALSE;
+	}
 
-	return FALSE;
+	return TRUE;
 }
 
 static void update_content(const gchar *text)
@@ -182,7 +210,7 @@ void fd_stage_show(const gchar *text)
 		timer_id = 0;
 	}
 
-	timer_id = g_timeout_add(5000, timeout_func, stage);
+	timer_id = g_timeout_add(100, timeout_func, stage);
 }
 
 void fd_stage_pin()
@@ -190,6 +218,20 @@ void fd_stage_pin()
 	if (timer_id > 0) {
 		g_source_remove(timer_id);
 		timer_id = 0;
+	}
+}
+
+void fd_stage_unpin()
+{
+	GtkWidget *stage = fd_stage_window_get(NULL);
+
+	if (timer_id > 0) {
+		g_source_remove(timer_id);
+		timer_id = 0;
+	}
+
+	if(gtk_widget_get_visible(stage)) {
+		gtk_widget_hide(stage);
 	}
 }
 
