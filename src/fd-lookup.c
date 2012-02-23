@@ -93,7 +93,7 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 				}
 				break;
 			default:
-				answer = g_strdup("Not Found!");
+				return NULL;
 				break;
 			}
 			suffix_idx++;
@@ -140,9 +140,26 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 			break;
 	}
 
-	if (cwords[0])
+	if (cwords[0]) {
 		answer = do_lookup(lookup_ctx, cwords);
-	else
+		/*
+		 * continue to lookup through strdown and then strup
+		 */
+		if (!answer) {
+			gchar *w;
+			w = g_ascii_strdown(cwords, -1);
+			answer = do_lookup(lookup_ctx, w);
+			g_free(w);
+			if (!answer) {
+				/* strup should direct call the dict */
+				w = g_ascii_strup(cwords, -1);
+				answer = fd_dict_get_answer(w);
+				g_free(w);
+			}
+		}
+	}
+
+	if (!answer)
 		answer = g_strdup("Not Found!");
 
 	g_free(dup_words);

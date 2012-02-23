@@ -85,17 +85,6 @@ gchar * fd_dict_get_answer(const gchar *words)
 	gchar *answer;
 
 	answer = cur_dict->get_answer(words);
-	if (!answer) {
-		gchar *w;
-		w = g_ascii_strdown(words, -1);
-		answer = cur_dict->get_answer(w);
-		g_free(w);
-		if (!answer) {
-			w = g_ascii_strup(words, -1);
-			answer = cur_dict->get_answer(w);
-			g_free(w);
-		}
-	}
 
 	return answer;
 }
