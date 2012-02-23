@@ -34,7 +34,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="editable">False</property>
-            <property name="cursor_visible">False</property>
+            <property name="wrap_mode">word-char</property>
           </object>
           <packing>
             <property name="x">10</property>
