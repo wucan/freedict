@@ -219,6 +219,8 @@ gchar * fd_dict_get_answer(const gchar *words)
 
 	if (cwords[0])
 		answer = _fd_dict_get_answer(cwords);
+	else
+		answer = g_strdup("Not Found!");
 
 	g_free(tmp_words);
 
