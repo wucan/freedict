@@ -70,7 +70,7 @@ static gboolean is_mouse_nearby_stage_window(GtkWidget *stage)
 }
 
 void button_save_clicked(GtkWidget *widget,
-			GdkEventButton *event, gpointer *data)
+			GdkEventButton *event, gpointer data)
 {
 	gchar *word, *content;
 	GtkTextBuffer *text_buf;
@@ -88,7 +88,7 @@ void button_save_clicked(GtkWidget *widget,
 }
 
 static void button_edit_clicked(GtkWidget *widget,
-			GdkEventButton *event, gpointer *data)
+			GdkEventButton *event, gpointer data)
 {
 	gboolean editable;
 
