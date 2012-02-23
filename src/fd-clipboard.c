@@ -25,7 +25,19 @@ static void receiver_func(GtkClipboard *clipboard,
 		return;
 	}
 
-	if (text && recv_text && strcmp(recv_text, text) == 0) {
+	/*
+	 * some program deselection text will send NULL text!
+	 */
+	if (!text) {
+		if (recv_text) {
+			g_free(recv_text);
+			recv_text = NULL;
+		}
+		rearm = TRUE;
+		return;
+	}
+
+	if (recv_text && strcmp(recv_text, text) == 0) {
 		rearm = TRUE;
 		return;
 	}
