@@ -2,7 +2,7 @@
 #define _FD_DICT_H_
 
 
-gboolean fd_dict_get_answer(struct fd_lookup_context *lookup_ctx);
+gchar * fd_dict_get_answer(const gchar *words);
 void fd_dict_init();
 
 

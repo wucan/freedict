@@ -176,7 +176,7 @@ static void update_content(const gchar *text)
 	gtk_entry_set_text(entry_word, text);
 	/* update textview_content */
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
-	fd_dict_get_answer(&lookup_ctx);
+	fd_lookup_exec(&lookup_ctx);
 	answer = fd_lookup_context_build_answer(&lookup_ctx);
 	sprintf(buf, "%s", answer);
 	gtk_text_buffer_set_text(text_buf, buf, -1);
