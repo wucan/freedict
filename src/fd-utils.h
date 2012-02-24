@@ -2,6 +2,8 @@
 #define _FD_UTILS_H_
 
 
+gboolean fd_utils_init();
+void fd_utils_deinit();
 gchar * fd_utils_get_active_window_title();
 int x11_mouse_position(int *x, int *y);
 int gdk_get_mouse_position(int *x, int *y);

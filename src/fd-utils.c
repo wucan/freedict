@@ -5,19 +5,38 @@
 #include <gtk/gtk.h>
 
 
+static Display *display;
+
 static Window Window_With_Name(Display *dpy, Window top, const char *name);
 static Window find_window_with_name(Display *display, const char *name);
+
+gboolean fd_utils_init()
+{
+	display = XOpenDisplay(NULL);
+	if (!display) {
+		g_print("XOpenDisplay() failed!\n");
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+void fd_utils_deinit()
+{
+	if (display) {
+		XCloseDisplay(display);
+		display = NULL;
+	}
+}
 
 gchar * fd_utils_get_active_window_title()
 {
 	Status status;
-	Display *display;
 	Window focus;
 	char *window_name = NULL;
 	int revert;
 	int rc;
 
-	display = XOpenDisplay(NULL);
 	rc = XGetInputFocus(display, &focus, &revert);
 	if (!rc) {
 		g_print("XGetInputFocus() failed!\n");
@@ -47,8 +66,6 @@ gchar * fd_utils_get_active_window_title()
 #endif
 
 done:
-	XCloseDisplay(display);
-
 	if (!window_name)
 		window_name = g_strdup("Unknown Context!");
 
@@ -99,23 +116,17 @@ static Window find_window_with_name(Display *display, const char *name)
  */
 int x11_mouse_position(int *x, int *y)
 {
-	Display *dsp = XOpenDisplay(NULL);
-	if (!dsp)
-		return -1;
-
-	int screenNumber = DefaultScreen(dsp);
+	int screenNumber = DefaultScreen(display);
 	XEvent event;
 
 	/* get info about current pointer position */
-	XQueryPointer(dsp, RootWindow(dsp, DefaultScreen(dsp)),
+	XQueryPointer(display, RootWindow(display, DefaultScreen(display)),
 		&event.xbutton.root, &event.xbutton.window,
 		&event.xbutton.x_root, &event.xbutton.y_root,
 		&event.xbutton.x, &event.xbutton.y, &event.xbutton.state);
 
 	*x = event.xbutton.x;
 	*y = event.xbutton.y;
-
-	XCloseDisplay(dsp);
 
 	return 0;
 }

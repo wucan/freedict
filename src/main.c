@@ -11,6 +11,7 @@
 #include "fd-clipboard.h"
 #include "fd-dict.h"
 #include "fd-user-dict.h"
+#include "fd-utils.h"
 
 
 /*
@@ -47,6 +48,7 @@ int main(int argc, char **argv)
 		GNOME_PARAM_APP_DATADIR,
 		PACKAGE_DATA_DIR, NULL);
 
+	fd_utils_init();
 	fd_dict_init();
 	fd_user_dict_open();
 
@@ -59,6 +61,7 @@ int main(int argc, char **argv)
 	gtk_main();
 
 	fd_user_dict_close();
+	fd_utils_deinit();
 
 	return 0;
 }
