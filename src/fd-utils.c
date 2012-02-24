@@ -29,7 +29,7 @@ void fd_utils_deinit()
 	}
 }
 
-gchar * fd_utils_get_active_window_title()
+static gchar * fd_utils_x11_get_active_window_title()
 {
 	Status status;
 	Window focus;
@@ -66,10 +66,41 @@ gchar * fd_utils_get_active_window_title()
 #endif
 
 done:
-	if (!window_name)
-		window_name = g_strdup("Unknown Context!");
 
 	return window_name;
+}
+
+static gchar * fd_utils_gdk_get_active_window_title()
+{
+	GdkScreen *screen;
+	GdkWindow *act_win, *top_win;
+	gchar *title = NULL;
+
+	screen = gdk_screen_get_default();
+	act_win = gdk_screen_get_active_window(screen);
+	if (act_win) {
+		top_win = gdk_window_get_effective_toplevel(act_win);
+		if (top_win) {
+			/* TODO: */
+		}
+	}
+	if (act_win)
+		g_object_unref(act_win);
+
+	return title;
+}
+
+gchar * fd_utils_get_active_window_title()
+{
+	gchar *title;
+
+	title = fd_utils_x11_get_active_window_title();
+	//title = fd_utils_gdk_get_active_window_title();
+
+	if (!title)
+		title = g_strdup("Unknown Title!");
+
+	return title;
 }
 
 /*
