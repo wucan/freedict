@@ -43,6 +43,9 @@ static gchar * fd_utils_x11_get_active_window_title()
 		goto done;
 	}
 
+	/* FIXME: Why the focus window id is larger by 1!!! */
+	focus -= 1;
+
 	/*
 	 * get the window title/name
 	 * FIXME: not working!
@@ -56,7 +59,7 @@ static gchar * fd_utils_x11_get_active_window_title()
 		char **str_list;
 		int str_cnt;
 		status = XTextPropertyToStringList(&text_prop, &str_list, &str_cnt);
-		if (status == 0 && str_cnt > 0) {
+		if (status && str_cnt > 0) {
 			window_name = g_strdup(str_list[0]);
 			XFreeStringList(str_list);
 		}
