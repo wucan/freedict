@@ -26,6 +26,8 @@
 
 int main(int argc, char **argv)
 {
+	printf("%s %s\n", PACKAGE_NAME, PACKAGE_VERSION);
+
 	Status status = XInitThreads();
 	if (!status) {
 		g_print("XInitThreads() failed!\n");
