@@ -73,6 +73,62 @@ done:
 	return window_name;
 }
 
+gchar * fd_utils_x11_get_active_window_title_v2()
+{
+	Status status;
+	Window focus;
+	char *window_name = NULL;
+	int revert;
+	int rc;
+
+	rc = XGetInputFocus(display, &focus, &revert);
+	if (!rc) {
+		g_print("XGetInputFocus() failed!\n");
+		goto done;
+	}
+
+	/* FIXME: Why the focus window id is larger by 1!!! */
+	focus -= 1;
+
+	const char *prop;
+	Atom atom, type;
+	int format;
+	long length;
+	unsigned long nitems, nbytes, nbytes_after;
+	int size;
+
+	atom = XInternAtom(display, "_NET_WM_NAME", True);
+	if (atom == None) {
+		g_print("WM_NAME atom not found!\n");
+		goto done;
+	}
+	status = XGetWindowProperty(display, focus, atom, 0, 100000,
+			False, AnyPropertyType, &type,
+			&format, &nitems, &nbytes_after, &prop);
+	if (status == BadWindow) {
+		g_print("BadWindow! window id %#x not exist!", focus);
+	} else if (status != Success) {
+		g_print("XGetWindowProperty failed! (%d)\n", status);
+	}
+
+	g_print("type %d, format %d, nitems %d, nbytes_after %d, prop %p\n",
+		type, format, nitems, nbytes_after, prop);
+	switch (format) {
+		case 32: nbytes = sizeof(long); break;
+		case 16: nbytes = sizeof(short); break;
+		case 8: nbytes = sizeof(char); break;
+		case 0: nbytes = 0; break;
+		default: goto done; break;
+	}
+	length = nitems * nbytes;
+	size = format;
+	window_name = prop;
+
+done:
+
+	return window_name;
+}
+
 static gchar * fd_utils_gdk_get_active_window_title()
 {
 	GdkScreen *screen;
@@ -98,6 +154,7 @@ gchar * fd_utils_get_active_window_title()
 	gchar *title;
 
 	title = fd_utils_x11_get_active_window_title();
+	//title = fd_utils_x11_get_active_window_title_v2();
 	//title = fd_utils_gdk_get_active_window_title();
 
 	if (!title)
