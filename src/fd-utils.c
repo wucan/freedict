@@ -2,6 +2,7 @@
 #include <X11/Xutil.h>
 
 #include <glib.h>
+#include <gtk/gtk.h>
 
 
 static Window Window_With_Name(Display *dpy, Window top, const char *name);
@@ -91,5 +92,65 @@ static Window Window_With_Name(Display *dpy, Window top, const char *name)
 static Window find_window_with_name(Display *display, const char *name)
 {
 	return Window_With_Name(display, RootWindow(display, 0), name);
+}
+
+/*
+ * get mouse position, in screen space
+ */
+int x11_mouse_position(int *x, int *y)
+{
+	Display *dsp = XOpenDisplay(NULL);
+	if (!dsp)
+		return -1;
+
+	int screenNumber = DefaultScreen(dsp);
+	XEvent event;
+
+	/* get info about current pointer position */
+	XQueryPointer(dsp, RootWindow(dsp, DefaultScreen(dsp)),
+		&event.xbutton.root, &event.xbutton.window,
+		&event.xbutton.x_root, &event.xbutton.y_root,
+		&event.xbutton.x, &event.xbutton.y, &event.xbutton.state);
+
+	*x = event.xbutton.x;
+	*y = event.xbutton.y;
+
+	XCloseDisplay(dsp);
+
+	return 0;
+}
+
+int gdk_get_mouse_position(int *x, int *y)
+{
+	GdkDisplay *display = gdk_display_get_default();
+
+	/* get cursor position */
+	gdk_display_get_pointer(display, NULL, x, y, NULL);
+
+	return 0;
+}
+
+gboolean is_mouse_nearby_stage_window(GtkWidget *stage)
+{
+	gint x, y;
+	gint win_x, win_y, win_w, win_h;
+	GdkDisplay *display;
+	GdkWindow *window;
+
+	if(!gtk_widget_get_visible(stage))
+		return FALSE;
+
+	display = gdk_display_get_default();
+	gdk_display_get_pointer(display, NULL, &x, &y, NULL);
+
+	gtk_window_get_position(GTK_WINDOW(stage), &win_x, &win_y);
+	gtk_window_get_size(GTK_WINDOW(stage), &win_w, &win_h);
+
+	GdkRectangle win_rect = {win_x, win_y, win_w, win_h};
+	GdkRectangle mouse_rect = {x - 5, y - 5, 10, 10};
+	if (gdk_rectangle_intersect(&win_rect, &mouse_rect, NULL))
+		return TRUE;
+	else
+		return FALSE;
 }
 
