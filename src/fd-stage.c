@@ -10,6 +10,8 @@ static GtkTextView *textview_content;
 static GtkEntry *entry_word;
 static GtkWidget *button_edit;
 
+static struct fd_lookup_context lookup_ctx = {0};
+
 void button_save_clicked(GtkWidget *widget,
 			GdkEventButton *event, gpointer data)
 {
@@ -23,7 +25,7 @@ void button_save_clicked(GtkWidget *widget,
 	gtk_text_buffer_get_end_iter(text_buf, &end);
 	content = gtk_text_buffer_get_text(text_buf, &start, &end, FALSE);
 
-	fd_user_dict_add(word, content, "Unknown");
+	fd_user_dict_add(word, content, lookup_ctx.context);
 
 	g_free(content);
 }
@@ -114,8 +116,8 @@ static void update_content(const gchar *text, const gchar *context)
 	GtkTextBuffer *text_buf;
 	char buf[1024];
 	gchar *answer;
-	struct fd_lookup_context lookup_ctx = {0};
 
+	fd_lookup_context_destroy(&lookup_ctx);
 	fd_lookup_context_init(&lookup_ctx, text, context);
 
 	/* update entry_word */
@@ -126,8 +128,6 @@ static void update_content(const gchar *text, const gchar *context)
 	answer = fd_lookup_context_build_answer(&lookup_ctx);
 	sprintf(buf, "%s", answer);
 	gtk_text_buffer_set_text(text_buf, buf, -1);
-
-	fd_lookup_context_destroy(&lookup_ctx);
 }
 
 void fd_stage_show(const gchar *text, const gchar *context)

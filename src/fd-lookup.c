@@ -8,18 +8,24 @@
 void fd_lookup_context_init(struct fd_lookup_context *ctx,
 		const gchar *words, const gchar *context)
 {
-	ctx->words = words;
-	ctx->context = context;
+	ctx->words = g_strdup(words);
+	ctx->context = g_strdup(context);
 }
 
 void fd_lookup_context_destroy(struct fd_lookup_context *ctx)
 {
+	if (ctx->words)
+		g_free(ctx->words);
+	if (ctx->context)
+		g_free(ctx->context);
 	if (ctx->result_answer)
 		g_free(ctx->result_answer);
 	if (ctx->dict_answers)
 		g_list_free(ctx->dict_answers);
 	if (ctx->user_dict_answers)
 		g_list_free(ctx->user_dict_answers);
+
+	memset(ctx, 0, sizeof(*ctx));
 }
 
 gchar * fd_lookup_context_build_answer(struct fd_lookup_context *ctx)
