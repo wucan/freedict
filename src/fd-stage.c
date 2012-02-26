@@ -12,6 +12,8 @@ static GtkWidget *button_edit;
 
 static struct fd_lookup_context lookup_ctx = {0};
 
+static void update_content(const gchar *text, const gchar *context);
+
 void button_save_clicked(GtkWidget *widget,
 			GdkEventButton *event, gpointer data)
 {
@@ -45,6 +47,15 @@ static void button_edit_clicked(GtkWidget *widget,
 		gtk_button_set_label(GTK_BUTTON(widget), "Edit");
 		fd_stage_unpin();
 	}
+}
+
+static void entry_word_changed(GtkEditable *editable, gpointer user_data)
+{
+	const gchar *word;
+
+	word = gtk_entry_get_text(entry_word);
+	if (word && word[0])
+		update_content(word, "User Input");
 }
 
 static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
@@ -86,6 +97,8 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 			G_CALLBACK(button_save_clicked), NULL);
 		g_signal_connect(G_OBJECT(button_edit), "clicked",
 			G_CALLBACK(button_edit_clicked), NULL);
+		g_signal_connect(G_OBJECT(entry_word), "changed",
+			G_CALLBACK(entry_word_changed), NULL);
 	}
 
 	return window;
