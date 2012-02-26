@@ -103,6 +103,11 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 					tmp_words[words_len - 1] = 0;
 					answer = fd_dict_get_answer(tmp_words);
 					tmp_words[words_len - 1] = 'd';
+					if (!answer) {
+						tmp_words[words_len - 2] = 0;
+						answer = fd_dict_get_answer(tmp_words);
+						tmp_words[words_len - 2] = 'e';
+					}
 				}
 				break;
 			default:
