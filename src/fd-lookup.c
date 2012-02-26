@@ -89,6 +89,10 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 					tmp_words[words_len - 2] = 0;
 					tmp_words[words_len - 3] = 0;
 					answer = fd_dict_get_answer(tmp_words);
+					if (!answer) {
+						tmp_words[words_len - 3] = 'e';
+						answer = do_lookup(lookup_ctx, tmp_words);
+					}
 					tmp_words[words_len - 1] = 'g';
 					tmp_words[words_len - 2] = 'n';
 					tmp_words[words_len - 3] = 'i';
