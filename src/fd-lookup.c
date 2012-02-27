@@ -12,6 +12,15 @@ void fd_lookup_context_init(struct fd_lookup_context *ctx,
 	ctx->context = g_strdup(context);
 }
 
+static void dict_record_destroy(gpointer data)
+{
+	struct fd_dict_record *rec = data;
+
+	g_free(rec->words);
+	g_free(rec->answer);
+	g_free(rec);
+}
+
 void fd_lookup_context_destroy(struct fd_lookup_context *ctx)
 {
 	if (ctx->words)
@@ -21,25 +30,63 @@ void fd_lookup_context_destroy(struct fd_lookup_context *ctx)
 	if (ctx->result_answer)
 		g_free(ctx->result_answer);
 	if (ctx->dict_answers)
-		g_list_free(ctx->dict_answers);
+		g_list_free_full(ctx->dict_answers, dict_record_destroy);
 	if (ctx->user_dict_answers)
 		g_list_free(ctx->user_dict_answers);
 
 	memset(ctx, 0, sizeof(*ctx));
 }
 
+static void build_func(gpointer data, gpointer user_data)
+{
+	struct fd_lookup_context *ctx = user_data;
+	struct fd_dict_record *rec = data;
+	gchar *new_result;
+
+	if (ctx->result_answer)
+		new_result = g_strconcat(ctx->result_answer, rec->answer, NULL);
+	else
+		new_result = g_strdup(rec->answer);
+	ctx->result_answer = new_result;
+}
+
 gchar * fd_lookup_context_build_answer(struct fd_lookup_context *ctx)
 {
+	if (!ctx->result_answer) {
+		if (g_list_length(ctx->dict_answers) == 0) {
+			ctx->result_answer = g_strdup("Not Found!");
+		} else {
+			g_list_foreach(ctx->dict_answers, build_func, ctx);
+		}
+	}
+
 	return ctx->result_answer;
+}
+
+static gboolean lookup(struct fd_lookup_context *lookup_ctx, gchar *cwords)
+{
+	gchar *answer;
+
+	answer = fd_dict_get_answer(cwords);
+	if (answer) {
+		struct fd_dict_record *rec = g_malloc0(sizeof(rec));
+		rec->dict = NULL;
+		rec->words = g_strdup(cwords);
+		rec->answer = answer;
+		lookup_ctx->dict_answers = g_list_append(lookup_ctx->dict_answers, rec);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 		gchar *words)
 {
-	gchar *answer;
+	gboolean got = FALSE;
 
-	answer = fd_dict_get_answer(words);
-	if (!answer) {
+	got = lookup(lookup_ctx, words);
+	if (!got) {
 		int words_len = strlen(words);
 		gchar *tmp_words = g_strdup(words);
 		int suffix_idx = -1;
@@ -50,7 +97,7 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 				if (g_str_has_suffix(tmp_words, "ies")) {
 					tmp_words[words_len - 2] = 0;
 					tmp_words[words_len - 3] = 'y';
-					answer = fd_dict_get_answer(tmp_words);
+					got = lookup(lookup_ctx, tmp_words);
 					tmp_words[words_len - 2] = 'e';
 					tmp_words[words_len - 3] = 'i';
 				}
@@ -58,10 +105,10 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 			case 0:
 				if (g_str_has_suffix(tmp_words, "s")) {
 					tmp_words[words_len - 1] = 0;
-					answer = fd_dict_get_answer(tmp_words);
+					got = lookup(lookup_ctx, tmp_words);
 					/* continue search the answer from here! */
-					if (!answer)
-						 answer = do_lookup(lookup_ctx, tmp_words);
+					if (!got)
+						got = lookup(lookup_ctx, tmp_words);
 					tmp_words[words_len - 1] = 's';
 				}
 				break;
@@ -69,7 +116,7 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 				if (g_str_has_suffix(tmp_words, "es")) {
 					tmp_words[words_len - 1] = 0;
 					tmp_words[words_len - 2] = 0;
-					answer = fd_dict_get_answer(tmp_words);
+					got = lookup(lookup_ctx, tmp_words);
 					tmp_words[words_len - 1] = 's';
 					tmp_words[words_len - 2] = 'e';
 				}
@@ -78,7 +125,7 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 				if (g_str_has_suffix(tmp_words, "er")) {
 					tmp_words[words_len - 1] = 0;
 					tmp_words[words_len - 2] = 0;
-					answer = fd_dict_get_answer(tmp_words);
+					got = lookup(lookup_ctx, tmp_words);
 					tmp_words[words_len - 1] = 'r';
 					tmp_words[words_len - 2] = 'e';
 				}
@@ -88,10 +135,10 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 					tmp_words[words_len - 1] = 0;
 					tmp_words[words_len - 2] = 0;
 					tmp_words[words_len - 3] = 0;
-					answer = fd_dict_get_answer(tmp_words);
-					if (!answer) {
+					got = lookup(lookup_ctx, tmp_words);
+					if (!got) {
 						tmp_words[words_len - 3] = 'e';
-						answer = do_lookup(lookup_ctx, tmp_words);
+						got = do_lookup(lookup_ctx, tmp_words);
 					}
 					tmp_words[words_len - 1] = 'g';
 					tmp_words[words_len - 2] = 'n';
@@ -101,11 +148,11 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 			case 4:
 				if (g_str_has_suffix(tmp_words, "ed")) {
 					tmp_words[words_len - 1] = 0;
-					answer = fd_dict_get_answer(tmp_words);
+					got = lookup(lookup_ctx, tmp_words);
 					tmp_words[words_len - 1] = 'd';
-					if (!answer) {
+					if (!got) {
 						tmp_words[words_len - 2] = 0;
-						answer = fd_dict_get_answer(tmp_words);
+						got = lookup(lookup_ctx, tmp_words);
 						tmp_words[words_len - 2] = 'e';
 					}
 				}
@@ -115,18 +162,18 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 				break;
 			}
 			suffix_idx++;
-		} while (!answer);
+		} while (!got);
 done:
 		g_free(tmp_words);
 	}
 
-	return answer;
+	return got;
 }
 
 gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 {
 	gchar *dup_words;
-	gchar *answer = NULL;
+	gboolean got = FALSE;
 	gchar *tmp_words;
 	gchar *cwords;
 	int len;
@@ -161,43 +208,38 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 	if (cwords[0]) {
 		int feature = fd_str_get_feature(cwords);
 
-		answer = do_lookup(lookup_ctx, cwords);
+		got = do_lookup(lookup_ctx, cwords);
 		/*
 		 * continue to lookup through strdown and then strup
 		 */
-		if (!answer) {
+		if (!got) {
 			gchar *w;
 			if (feature != FD_STR_FEATURE_ALL_LOWER) {
 				w = g_ascii_strdown(cwords, -1);
-				answer = do_lookup(lookup_ctx, w);
+				got = do_lookup(lookup_ctx, w);
 				g_free(w);
 			}
-			if (!answer && (feature != FD_STR_FEATURE_ALL_UPPER)) {
+			if (!got && (feature != FD_STR_FEATURE_ALL_UPPER)) {
 				/* strup should direct call the dict */
 				w = g_ascii_strup(cwords, -1);
-				answer = fd_dict_get_answer(w);
+				got = lookup(lookup_ctx, w);
 				g_free(w);
 			}
 
 			/*
 			 * search for Camel style words
 			 */
-			if (!answer) {
+			if (!got) {
 				w = g_ascii_strdown(cwords, -1);
 				w[0] = g_ascii_toupper(w[0]);
 				if (!g_str_equal(w, cwords))
-					answer = do_lookup(lookup_ctx, w);
+					got = do_lookup(lookup_ctx, w);
 				g_free(w);
 			}
 		}
 	}
 
-	if (!answer)
-		answer = g_strdup("Not Found!");
-
 	g_free(dup_words);
-
-	lookup_ctx->result_answer = answer;
 
 	return TRUE;
 }
