@@ -7,12 +7,12 @@ freedict_SOURCES=main.c fd-systray.c fd-systray.h \
 
 freedict_CFLAGS=\
 	-I$(top_srcdir) -I$(top_builddir) \
-	$(GTK_CFLAGS) $(GNOME_CFLAGS) $(SQLITE3_CFLAGS)
+	$(GTK_CFLAGS) $(SQLITE3_CFLAGS)
 
 freedict_CFLAGS += -g
 
 #  uncomment the following if freedict requires the math library
-freedict_LDADD=$(GTK_LIBS) $(GNOME_LIBS) $(SQLITE3_LIBS) -lX11
+freedict_LDADD=$(GTK_LIBS) $(SQLITE3_LIBS) -lX11
 
 EXTRA_DIST=SConscript
 

@@ -1,5 +1,4 @@
 #include <glib.h>
-#include <gnome.h>
 #include "gtk_support.h"
 #include "gdk_support.h"
 #include "fd-window.h"
@@ -23,7 +22,7 @@ static GtkWidget *create_main_menu()
 	preferences_item = create_stock_menu_item("preferences_item",
 		GTK_STOCK_PREFERENCES, NULL, preferences_menu_item_activate_cb);
 	gtk_menu_append(GTK_MENU(menu), preferences_item);
-	quit_item = create_menu_item("quit_item", _("Quit"),
+	quit_item = create_menu_item("quit_item", "Quit",
 			NULL, quit_menu_item_activate_cb);
 	gtk_menu_append(GTK_MENU(menu), quit_item);
 	GLADE_HOOKUP_OBJECT(menu, preferences_item, "preferences_item");
@@ -58,7 +57,7 @@ GtkWidget *fd_systray_create()
 	g_signal_connect((gpointer)status_icon,
 		"popup-menu", G_CALLBACK(status_icon_popup_menu_cb), NULL);
 
-	gtk_status_icon_set_tooltip(status_icon, _("Freedict"));
+	gtk_status_icon_set_tooltip(status_icon, "Freedict");
 
 	GLADE_HOOKUP_OBJECT_NO_REF(status_icon, status_icon, "status_icon");
 

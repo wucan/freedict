@@ -1,5 +1,4 @@
 #include <gtk/gtk.h>
-#include <gnome.h>
 
 
 GtkWidget *fd_window_new()
@@ -20,7 +19,7 @@ void show_preferences_window(GtkWidget *fd_window)
 {
 	GtkWidget *dialog;
 
-	dialog = gtk_dialog_new_with_buttons(_("Preferences Editor"),
+	dialog = gtk_dialog_new_with_buttons("Preferences Editor",
 		GTK_WINDOW(fd_window), 	GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
