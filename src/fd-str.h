@@ -13,6 +13,7 @@ gboolean fd_str_is_all_upper(gchar *s);
 gboolean fd_str_is_all_lower(gchar *s);
 gboolean fd_str_is_mix(gchar *s);
 gint fd_str_get_feature(gchar *s);
+const gchar * fd_str_next_line_pointer(const gchar **lines);
 
 gboolean fd_ascii_is_vowel(gchar c);
 

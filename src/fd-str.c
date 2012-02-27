@@ -47,6 +47,22 @@ gboolean fd_str_is_mix(gchar *s)
 	return (fd_str_get_feature(s) == FD_STR_FEATURE_MIX);
 }
 
+const gchar * fd_str_next_line_pointer(const gchar **lines)
+{
+	gchar *line = NULL;
+
+	if (*lines[0]) {
+		line = *lines;
+		gchar *p = strchr(line, '\n');
+		if (p)
+			*lines = ++p;
+		else
+			*lines = line + strlen(line);
+	}
+
+	return line;
+}
+
 gboolean fd_ascii_is_vowel(gchar c)
 {
 	if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
