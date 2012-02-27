@@ -111,8 +111,8 @@ int fd_user_dict_add(gchar *word, gchar *answer, gchar *context)
 
 	if (fd_user_dict_lookup(word, &r)) {
 		r.Count++;
-		sprintf(sql, "UPDATE UserDict SET Time=%d,Count=%d WHERE Word=\'%s\'",
-				time(NULL), r.Count, word);
+		sprintf(sql, "UPDATE UserDict SET Time=%d,Context=\'%s\',Answer=\'%s\',Count=%d WHERE Word=\'%s\'",
+				time(NULL), context, answer, r.Count, word);
 		fd_user_dict_record_free(&r);
 		rc = sqlite3_exec(db, sql, update_callback, 0, &errmsg);
 		if (rc != SQLITE_OK) {
