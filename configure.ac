@@ -1,9 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.57])
-AC_INIT([Freedict], [0.02], [http://xxx], [freedict])
+AC_INIT([Freedict], [0.03], [http://xxx], [freedict])
 dnl Every other copy of the package version number gets its value from here
-AM_INIT_AUTOMAKE(freedict, 0.02)
+AM_INIT_AUTOMAKE(freedict, 0.03)
 
 dnl create a config.h file (Automake will add -DHAVE_CONFIG_H)
 AM_CONFIG_HEADER(config.h)
