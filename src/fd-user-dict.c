@@ -51,7 +51,7 @@ static int select_callback(void *data, int argc, char **argv, char **colname)
 	return 0;
 }
 
-static void fd_user_dict_record_free(struct fd_user_dict_record *rec)
+void fd_user_dict_record_free(struct fd_user_dict_record *rec)
 {
 	if (rec->Context)
 		g_free(rec->Context);
