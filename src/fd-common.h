@@ -14,6 +14,10 @@ struct fd_dict {
 };
 
 struct fd_user_dict_record {
+	time_t Time;
+	gchar *Context;
+	gchar *Word;
+	gchar *Answer;
 	int Count;
 };
 

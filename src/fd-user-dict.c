@@ -42,9 +42,23 @@ static int select_callback(void *data, int argc, char **argv, char **colname)
 		g_print("\t%s = %s\n", colname[i], argv[i] ? argv[i] : "NULL");
 	}
 
+	r->Time = atoi(argv[0]);
+	r->Context = g_strdup(argv[1]);
+	r->Word = g_strdup(argv[2]);
+	r->Answer = g_strdup(argv[3]);
 	r->Count = atoi(argv[4]);
 
 	return 0;
+}
+
+static void fd_user_dict_record_free(struct fd_user_dict_record *rec)
+{
+	if (rec->Context)
+		g_free(rec->Context);
+	if (rec->Word)
+		g_free(rec->Word);
+	if (rec->Answer)
+		g_free(rec->Answer);
 }
 
 static int update_callback(void *data, int argc, char **argv, char *colname)
@@ -61,7 +75,7 @@ static int insert_callback(void *data, int argc, char **argv, char *colname)
 	return 0;
 }
 
-static gboolean word_exist(gchar *word, struct fd_user_dict_record *r)
+gboolean fd_user_dict_lookup(gchar *word, struct fd_user_dict_record *r)
 {
 	int rc;
 	char sql[1024];
@@ -95,10 +109,11 @@ int fd_user_dict_add(gchar *word, gchar *answer, gchar *context)
 	if (!db)
 		return -1;
 
-	if (word_exist(word, &r)) {
+	if (fd_user_dict_lookup(word, &r)) {
 		r.Count++;
 		sprintf(sql, "UPDATE UserDict SET Time=%d,Count=%d WHERE Word=\'%s\'",
 				time(NULL), r.Count, word);
+		fd_user_dict_record_free(&r);
 		rc = sqlite3_exec(db, sql, update_callback, 0, &errmsg);
 		if (rc != SQLITE_OK) {
 			g_print("sql exec update failed! (%s)\n", errmsg);
