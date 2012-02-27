@@ -178,6 +178,17 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 				answer = fd_dict_get_answer(w);
 				g_free(w);
 			}
+
+			/*
+			 * search for Camel style words
+			 */
+			if (!answer) {
+				w = g_ascii_strdown(cwords, -1);
+				w[0] = g_ascii_toupper(w[0]);
+				if (!g_str_equal(w, cwords))
+					answer = do_lookup(lookup_ctx, w);
+				g_free(w);
+			}
 		}
 	}
 
