@@ -47,3 +47,10 @@ gboolean fd_str_is_mix(gchar *s)
 	return (fd_str_get_feature(s) == FD_STR_FEATURE_MIX);
 }
 
+gboolean fd_ascii_is_vowel(gchar c)
+{
+	if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+		return TRUE;
+	return FALSE;
+}
+
