@@ -256,3 +256,15 @@ gboolean is_mouse_nearby_stage_window(GtkWidget *stage)
 		return FALSE;
 }
 
+void hex_dump(const gchar *prefix, guchar *buf, int size)
+{
+	int i;
+
+	if (size < 0)
+		return;
+	g_print("%s:", prefix);
+	for (i = 0; i < size; i++)
+		g_print(" %02x", buf[i]);
+	g_print("\n");
+}
+

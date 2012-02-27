@@ -11,18 +11,6 @@ struct fd_dict_box {
 static struct fd_dict_box dict_box;
 static struct fd_dict *cur_dict;
 
-static void hex_dump(const gchar *prefix, guchar *buf, int size)
-{
-	int i;
-
-	if (size < 0)
-		return;
-	g_print("%s:", prefix);
-	for (i = 0; i < size; i++)
-		g_print(" %02x", buf[i]);
-	g_print("\n");
-}
-
 static gchar * do_conv(gchar *in_encode, gchar *in, gsize in_size)
 {
 	GIConv iconv = g_iconv_open("UTF-8", in_encode);
