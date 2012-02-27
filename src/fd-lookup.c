@@ -12,6 +12,14 @@ void fd_lookup_context_init(struct fd_lookup_context *ctx,
 	ctx->context = g_strdup(context);
 }
 
+static void user_dict_record_destroy(gpointer data)
+{
+	struct fd_user_dict_record *urec = data;
+
+	fd_user_dict_record_free(urec);
+	g_free(urec);
+}
+
 static void dict_record_destroy(gpointer data)
 {
 	struct fd_dict_record *rec = data;
@@ -32,9 +40,20 @@ void fd_lookup_context_destroy(struct fd_lookup_context *ctx)
 	if (ctx->dict_answers)
 		g_list_free_full(ctx->dict_answers, dict_record_destroy);
 	if (ctx->user_dict_answers)
-		g_list_free(ctx->user_dict_answers);
+		g_list_free_full(ctx->user_dict_answers, user_dict_record_destroy);
 
 	memset(ctx, 0, sizeof(*ctx));
+}
+
+static void user_dict_build_func(gpointer data, gpointer user_data)
+{
+	struct fd_lookup_context *ctx = user_data;
+	struct fd_user_dict_record *urec = data;
+	gchar *new_result;
+
+	new_result = g_strconcat(ctx->result_answer ? ctx->result_answer : "",
+			urec->Answer, NULL);
+	ctx->result_answer = new_result;
 }
 
 static void build_func(gpointer data, gpointer user_data)
@@ -43,16 +62,19 @@ static void build_func(gpointer data, gpointer user_data)
 	struct fd_dict_record *rec = data;
 	gchar *new_result;
 
-	if (ctx->result_answer)
-		new_result = g_strconcat(ctx->result_answer, rec->answer, NULL);
-	else
-		new_result = g_strdup(rec->answer);
+	new_result = g_strconcat(ctx->result_answer ? ctx->result_answer : "",
+			rec->answer, NULL);
 	ctx->result_answer = new_result;
 }
 
 gchar * fd_lookup_context_build_answer(struct fd_lookup_context *ctx)
 {
 	if (!ctx->result_answer) {
+		if (g_list_length(ctx->user_dict_answers)) {
+			g_list_foreach(ctx->user_dict_answers, user_dict_build_func, ctx);
+			return ctx->result_answer;
+		}
+
 		if (g_list_length(ctx->dict_answers) == 0) {
 			ctx->result_answer = g_strdup("Not Found!");
 		} else {
@@ -66,7 +88,22 @@ gchar * fd_lookup_context_build_answer(struct fd_lookup_context *ctx)
 static gboolean lookup(struct fd_lookup_context *lookup_ctx, gchar *cwords)
 {
 	gchar *answer;
+	struct fd_user_dict_record urec;
 
+	/*
+	 * first looking in user dict
+	 */
+	if (fd_user_dict_lookup(cwords, &urec)) {
+		struct fd_user_dict_record *new_urec = g_malloc(sizeof(urec));
+		*new_urec = urec;
+		lookup_ctx->user_dict_answers = g_list_append(
+				lookup_ctx->user_dict_answers, new_urec);
+		return TRUE;
+	}
+
+	/*
+	 * at last looking in dict
+	 */
 	answer = fd_dict_get_answer(cwords);
 	if (answer) {
 		struct fd_dict_record *rec = g_malloc0(sizeof(rec));
