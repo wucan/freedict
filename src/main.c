@@ -2,10 +2,6 @@
 #include "config.h"
 #endif
 
-#include <X11/Xlib.h>
-
-#include <stdlib.h>
-
 #include "fd-systray.h"
 #include "fd-stage.h"
 #include "fd-clipboard.h"
@@ -17,12 +13,6 @@
 int main(int argc, char **argv)
 {
 	printf("%s %s\n", PACKAGE_NAME, PACKAGE_VERSION);
-
-	Status status = XInitThreads();
-	if (!status) {
-		g_print("XInitThreads() failed!\n");
-		exit(EXIT_FAILURE);
-	}
 
 	gtk_init(&argc, &argv);
 
