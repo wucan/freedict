@@ -4,6 +4,7 @@
 
 
 static GtkClipboard *clipboard;
+static guint timer_id;
 
 gchar * fd_clipboard_get()
 {
@@ -61,15 +62,14 @@ static void receiver_func(GtkClipboard *clipboard,
 	rearm = TRUE;
 }
 
-static void thread_func(gpointer data)
+static gboolean timeout_func(gpointer user_data)
 {
-	while (TRUE) {
-		if (rearm) {
-			rearm = FALSE;
-			gtk_clipboard_request_text(clipboard, receiver_func, NULL);
-		}
-		usleep(100000);
+	if (rearm) {
+		rearm = FALSE;
+		gtk_clipboard_request_text(clipboard, receiver_func, NULL);
 	}
+
+	return TRUE;
 }
 
 void fd_clipboard_init()
@@ -78,7 +78,14 @@ void fd_clipboard_init()
 	clipboard = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
 	/* GDK_SELECTION_PRIMARY, CLIPBOARD */
 	gtk_clipboard_set_can_store(clipboard, NULL, 0);
-	g_thread_create(thread_func, NULL, FALSE, NULL);
+	timer_id = g_timeout_add(100, timeout_func, NULL);
 }
 
+void fd_clipboard_deinit()
+{
+	if (timer_id) {
+		g_source_remove(timer_id);
+		timer_id = 0;
+	}
+}
 

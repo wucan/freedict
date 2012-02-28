@@ -49,6 +49,7 @@ int main(int argc, char **argv)
 
 	gtk_main();
 
+	fd_clipboard_deinit();
 	fd_user_dict_close();
 	fd_utils_deinit();
 
