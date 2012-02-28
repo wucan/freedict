@@ -44,3 +44,18 @@ GtkWidget *create_stock_menu_item(const char *name, const gchar *stock_id,
 	return menu_item;
 }
 
+GtkWidget *create_check_menu_item(const char *name, const char *label,
+		void (*toggled_callbacker)(GtkCheckMenuItem *item))
+{
+	GtkWidget *menu_item;
+
+	menu_item = gtk_check_menu_item_new_with_label(label);
+	gtk_check_menu_item_set_active((GtkCheckMenuItem *)menu_item, TRUE);
+	gtk_check_menu_item_set_show_toggle((GtkCheckMenuItem *)menu_item, TRUE);
+	gtk_signal_connect_object((gpointer)menu_item, "toggled",
+		GTK_SIGNAL_FUNC(toggled_callbacker), menu_item);
+	gtk_widget_show(menu_item);
+
+	return menu_item;
+}
+

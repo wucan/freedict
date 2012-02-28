@@ -12,16 +12,30 @@ static void quit_menu_item_activate_cb(gpointer menu_item)
 {
 	gtk_main_quit();
 }
+
+static void pickable_menu_item_toggled_cb(GtkCheckMenuItem *item)
+{
+	gboolean pickable;
+
+	pickable = !gtk_check_menu_item_get_active(item);
+
+	/* TODO */
+}
+
 static GtkWidget *create_main_menu()
 {
 	GtkWidget *menu;
 	GtkWidget *preferences_item;
+	GtkWidget *pickable_item;
 	GtkWidget *quit_item;
 
 	menu = gtk_menu_new();
 	preferences_item = create_stock_menu_item("preferences_item",
 		GTK_STOCK_PREFERENCES, NULL, preferences_menu_item_activate_cb);
 	gtk_menu_append(GTK_MENU(menu), preferences_item);
+	pickable_item = create_check_menu_item("pickable_item", "Pickable",
+			pickable_menu_item_toggled_cb);
+	gtk_menu_append(GTK_MENU(menu), pickable_item);
 	quit_item = create_menu_item("quit_item", "Quit",
 			NULL, quit_menu_item_activate_cb);
 	gtk_menu_append(GTK_MENU(menu), quit_item);
