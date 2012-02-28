@@ -30,6 +30,8 @@ void button_save_clicked(GtkWidget *widget,
 	fd_user_dict_add(word, content, lookup_ctx.context);
 
 	g_free(content);
+
+	fd_stage_unpin();
 }
 
 static void button_edit_clicked(GtkWidget *widget,
