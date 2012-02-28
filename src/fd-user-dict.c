@@ -37,10 +37,12 @@ static int select_callback(void *data, int argc, char **argv, char **colname)
 	int i;
 	struct fd_user_dict_record *r = (struct fd_user_dict_record *)data;
 
+#if 0
 	g_print("sqlite3 select callback\n");
 	for (i = 0; i < argc; i++) {
 		g_print("\t%s = %s\n", colname[i], argv[i] ? argv[i] : "NULL");
 	}
+#endif
 
 	r->Time = atoi(argv[0]);
 	r->Context = g_strdup(argv[1]);
