@@ -16,6 +16,8 @@ int main(int argc, char **argv)
 
 	gtk_init(&argc, &argv);
 
+	g_set_application_name(PACKAGE_NAME " " PACKAGE_VERSION);
+
 	/* GtkBuilder signals need this */
 	GModule *mod = g_module_open(NULL, G_MODULE_BIND_LOCAL);
 	if (!mod) {
