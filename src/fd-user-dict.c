@@ -104,7 +104,7 @@ int fd_user_dict_add(gchar *word, gchar *answer, gchar *context)
 {
 	int rc;
 	int count;
-	char sql[1024];
+	char *sql;
 	char *errmsg = NULL;
 	struct fd_user_dict_record r;
 
@@ -113,20 +113,22 @@ int fd_user_dict_add(gchar *word, gchar *answer, gchar *context)
 
 	if (fd_user_dict_lookup(word, &r)) {
 		r.Count++;
-		sprintf(sql, "UPDATE UserDict SET Time=%d,Context=\'%s\',Answer=\'%s\',Count=%d WHERE Word=\'%s\'",
+		sql = sqlite3_mprintf("UPDATE UserDict SET Time=%d,Context=%Q,Answer=%Q,Count=%d WHERE Word=%Q",
 				time(NULL), context, answer, r.Count, word);
 		fd_user_dict_record_free(&r);
 		rc = sqlite3_exec(db, sql, update_callback, 0, &errmsg);
+		sqlite3_free(sql);
 		if (rc != SQLITE_OK) {
 			g_print("sql exec update failed! (%s)\n", errmsg);
 			sqlite3_free(errmsg);
 			return -1;
 		}
 	} else {
-		sprintf(sql, "INSERT INTO UserDict (Time,Context,Word,Answer,Count)"
-				" VALUES (%d,\'%s\',\'%s\',\'%s\',1)",
+		sql = sqlite3_mprintf("INSERT INTO UserDict (Time,Context,Word,Answer,Count)"
+				" VALUES (%d,%Q,%Q,%Q,1)",
 				time(NULL), context, word, answer);
 		rc = sqlite3_exec(db, sql, insert_callback, 0, &errmsg);
+		sqlite3_free(sql);
 		if (rc != SQLITE_OK) {
 			g_print("sql exec insert failed! (%s)\n", errmsg);
 			sqlite3_free(errmsg);
