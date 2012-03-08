@@ -29,6 +29,24 @@ void fd_utils_deinit()
 	}
 }
 
+static Window fix_window(Display *display, Window win)
+{
+	Status status;
+	Atom *protocols;
+	int cnt;
+
+	status = XGetWMProtocols(display, win, &protocols, &cnt);
+	if (status == 0) {
+		/* FIXME: Why the focus window id is larger by 1!!! */
+		g_print("fix window from %#x -> %#x\n", win, win - 1);
+		win -= 1;
+	} else {
+		XFree(protocols);
+	}
+
+	return win;
+}
+
 static gchar * fd_utils_x11_get_active_window_title()
 {
 	Status status;
@@ -43,8 +61,7 @@ static gchar * fd_utils_x11_get_active_window_title()
 		goto done;
 	}
 
-	/* FIXME: Why the focus window id is larger by 1!!! */
-	focus -= 1;
+	focus = fix_window(display, focus);
 
 	/*
 	 * get the window title/name
@@ -87,8 +104,7 @@ gchar * fd_utils_x11_get_active_window_title_v2()
 		goto done;
 	}
 
-	/* FIXME: Why the focus window id is larger by 1!!! */
-	focus -= 1;
+	focus = fix_window(display, focus);
 
 	const char *prop;
 	Atom atom, type;
