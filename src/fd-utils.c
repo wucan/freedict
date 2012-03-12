@@ -29,8 +29,9 @@ void fd_utils_deinit()
 	}
 }
 
-static Window fix_window(Display *display, Window win)
+static Window fix_window(Display *display, Window win, int revert)
 {
+#if 0
 	Status status;
 	Atom *protocols;
 	int cnt;
@@ -43,6 +44,10 @@ static Window fix_window(Display *display, Window win)
 	} else {
 		XFree(protocols);
 	}
+#else
+	/* revert meaning ??? ! */
+	win -= revert - 1;
+#endif
 
 	return win;
 }
@@ -61,7 +66,7 @@ static gchar * fd_utils_x11_get_active_window_title()
 		goto done;
 	}
 
-	focus = fix_window(display, focus);
+	focus = fix_window(display, focus, revert);
 
 	/*
 	 * get the window title/name
@@ -104,7 +109,7 @@ gchar * fd_utils_x11_get_active_window_title_v2()
 		goto done;
 	}
 
-	focus = fix_window(display, focus);
+	focus = fix_window(display, focus, revert);
 
 	const char *prop;
 	Atom atom, type;
