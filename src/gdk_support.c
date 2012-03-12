@@ -11,7 +11,7 @@ GdkPixbuf *create_pixbuf(const char *filename)
 
 	if (!filename || !filename[0])
 		return NULL;
-	path = "./../pixmaps/ipmsg.xpm";
+	path = "./../pixmaps/freedict.png";
 	pixbuf = gdk_pixbuf_new_from_file(path, &err);
 	if (!pixbuf) {
 		g_error_free(err);

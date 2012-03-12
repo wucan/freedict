@@ -60,7 +60,7 @@ GtkWidget *fd_systray_create()
 	GtkStatusIcon *status_icon = NULL;
 	GdkPixbuf *pixbuf;
 
-	pixbuf = create_pixbuf ("pixmaps/ipmsg.xpm");
+	pixbuf = create_pixbuf ("pixmaps/freedict.png");
 	if (pixbuf) {
 			status_icon = gtk_status_icon_new_from_pixbuf(pixbuf);
 			gdk_pixbuf_unref(pixbuf);

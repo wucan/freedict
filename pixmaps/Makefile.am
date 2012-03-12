@@ -1,5 +1,5 @@
 pixmapdir = $(datadir)/pixmaps
-pixmap_DATA = ipmsg.xpm
+pixmap_DATA = freedict.png
 
 EXTRA_DIST = $(pixmap_DATA)
 
