@@ -38,4 +38,4 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
-AC_OUTPUT(Makefile src/Makefile pixmaps/Makefile)
+AC_OUTPUT(Makefile src/Makefile pixmaps/Makefile dicts/Makefile)
