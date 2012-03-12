@@ -9,6 +9,7 @@
 static GtkTextView *textview_content;
 static GtkEntry *entry_word;
 static GtkWidget *button_edit;
+static gboolean is_user_input = FALSE;
 
 static struct fd_lookup_context lookup_ctx = {0};
 
@@ -55,9 +56,20 @@ static void entry_word_changed(GtkEditable *editable, gpointer user_data)
 {
 	const gchar *word;
 
+	if (!is_user_input)
+		return;
+
 	word = gtk_entry_get_text(entry_word);
 	if (word && word[0])
 		update_content(word, "User Input");
+}
+
+static gboolean entry_word_focus_in_event(GtkWidget *widget,
+		GdkEvent *event, gpointer user_data)
+{
+	is_user_input = TRUE;
+
+	return FALSE;
 }
 
 static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
@@ -101,6 +113,8 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 			G_CALLBACK(button_edit_clicked), NULL);
 		g_signal_connect(G_OBJECT(entry_word), "changed",
 			G_CALLBACK(entry_word_changed), NULL);
+		g_signal_connect(G_OBJECT(entry_word), "focus-in-event",
+			G_CALLBACK(entry_word_focus_in_event), NULL);
 	}
 
 	return window;
@@ -149,6 +163,8 @@ void fd_stage_show(const gchar *text, const gchar *context)
 {
 	GtkWidget *stage;
 	int x, y;
+
+	is_user_input = FALSE;
 
 	stage = fd_stage_window_get(NULL);
 
