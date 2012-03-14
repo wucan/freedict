@@ -194,6 +194,13 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 					}
 				}
 				break;
+			case 5:
+				if (g_str_has_suffix(tmp_words, "ly")) {
+					tmp_words[words_len - 2] = 0;
+					got = lookup(lookup_ctx, tmp_words);
+					tmp_words[words_len - 2] = 'l';
+				}
+				break;
 			default:
 				return NULL;
 				break;
