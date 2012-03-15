@@ -85,6 +85,18 @@ gchar * fd_lookup_context_build_answer(struct fd_lookup_context *ctx)
 	return ctx->result_answer;
 }
 
+const gchar * fd_lookup_context_build_context(struct fd_lookup_context *ctx)
+{
+	if (g_list_length(ctx->user_dict_answers)) {
+		struct fd_user_dict_record *urec;
+		GList *first = g_list_first(ctx->user_dict_answers);
+		urec = (struct fd_user_dict_record *)first->data;
+		return urec->Context;
+	}
+
+	return ctx->context;
+}
+
 static gboolean lookup(struct fd_lookup_context *lookup_ctx, gchar *cwords)
 {
 	gchar *answer;

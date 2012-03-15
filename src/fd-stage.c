@@ -7,6 +7,7 @@
 
 
 static GtkTextView *textview_content;
+static GtkTextView *textview_context;
 static GtkEntry *entry_word;
 static GtkWidget *button_edit;
 static gboolean is_user_input = FALSE;
@@ -100,6 +101,7 @@ static GtkWidget * fd_stage_window_get(GtkWidget *do_widget)
 		}
 
 		textview_content = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "textview_content"));
+		textview_context = GTK_TEXT_VIEW(gtk_builder_get_object(builder, "textview_context"));
 
 		/* hook up signals */
 		/* FIXME: not working! */
@@ -157,6 +159,10 @@ static void update_content(const gchar *text, const gchar *context)
 	answer = fd_lookup_context_build_answer(&lookup_ctx);
 	sprintf(buf, "%s", answer);
 	gtk_text_buffer_set_text(text_buf, buf, -1);
+	/* show context */
+	context = fd_lookup_context_build_context(&lookup_ctx);
+	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_context));
+	gtk_text_buffer_set_text(text_buf, context, -1);
 }
 
 void fd_stage_show(const gchar *text, const gchar *context)
