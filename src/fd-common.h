@@ -40,6 +40,8 @@ struct fd_lookup_context {
 
 	/* answer from user_dict, list of fd_user_dict_record */
 	GList *user_dict_answers;
+
+	const gchar *build_context;
 };
 
 

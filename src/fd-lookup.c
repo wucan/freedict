@@ -35,6 +35,8 @@ void fd_lookup_context_destroy(struct fd_lookup_context *ctx)
 		g_free(ctx->words);
 	if (ctx->context)
 		g_free(ctx->context);
+	if (ctx->build_context)
+		g_free(ctx->build_context);
 	if (ctx->result_answer)
 		g_free(ctx->result_answer);
 	if (ctx->dict_answers)
@@ -87,14 +89,19 @@ gchar * fd_lookup_context_build_answer(struct fd_lookup_context *ctx)
 
 const gchar * fd_lookup_context_build_context(struct fd_lookup_context *ctx)
 {
+	if (ctx->build_context)
+		return ctx->build_context;
+
 	if (g_list_length(ctx->user_dict_answers)) {
 		struct fd_user_dict_record *urec;
 		GList *first = g_list_first(ctx->user_dict_answers);
 		urec = (struct fd_user_dict_record *)first->data;
-		return urec->Context;
+		ctx->build_context = g_strconcat(ctime(&urec->Time), urec->Context, NULL);
+	} else {
+		ctx->build_context = g_strdup(ctx->context);
 	}
 
-	return ctx->context;
+	return ctx->build_context;
 }
 
 static gboolean lookup(struct fd_lookup_context *lookup_ctx, gchar *cwords)
