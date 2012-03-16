@@ -1,3 +1,3 @@
 * Thu Mar 15 19:10:11 CST 2012
-In the lastest firefox 11.0, I found some misbehavior in get it's title, some page could get the correct window title, as in playframework.org!
+[D] In the lastest firefox 11.0, I found some misbehavior in get it's title, some page could get the correct window title, as in playframework.org!
 

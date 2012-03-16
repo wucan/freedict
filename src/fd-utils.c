@@ -175,7 +175,8 @@ gchar * fd_utils_get_active_window_title()
 	gchar *title;
 
 	title = fd_utils_x11_get_active_window_title();
-	//title = fd_utils_x11_get_active_window_title_v2();
+	if (!title)
+		title = fd_utils_x11_get_active_window_title_v2();
 	//title = fd_utils_gdk_get_active_window_title();
 
 	if (!title)
