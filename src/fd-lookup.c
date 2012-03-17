@@ -3,6 +3,7 @@
 #include "fd-common.h"
 #include "fd-dict.h"
 #include "fd-str.h"
+#include "fd-iciba.h"
 
 
 void fd_lookup_context_init(struct fd_lookup_context *ctx,
@@ -299,6 +300,15 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 					got = do_lookup(lookup_ctx, w);
 				g_free(w);
 			}
+		}
+
+		/*
+		 * at last got from online dict
+		 */
+		if (!got) {
+			char *online_answer = fd_iciba_lookup(cwords);
+			if (online_answer)
+				lookup_ctx->result_answer = g_strdup(online_answer);
 		}
 	}
 

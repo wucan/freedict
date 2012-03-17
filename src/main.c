@@ -8,6 +8,7 @@
 #include "fd-dict.h"
 #include "fd-user-dict.h"
 #include "fd-utils.h"
+#include "fd-iciba.h"
 
 
 int main(int argc, char **argv)
@@ -32,6 +33,7 @@ int main(int argc, char **argv)
 	fd_utils_init();
 	fd_dict_init();
 	fd_user_dict_open();
+	fd_iciba_init();
 
 	fd_systray_create();
 
@@ -42,6 +44,7 @@ int main(int argc, char **argv)
 	gtk_main();
 
 	fd_clipboard_deinit();
+	fd_iciba_deinit();
 	fd_user_dict_close();
 	fd_utils_deinit();
 
