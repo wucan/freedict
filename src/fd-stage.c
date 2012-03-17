@@ -145,7 +145,6 @@ static gboolean timeout_func(gpointer data)
 static void update_content(const gchar *text, const gchar *context)
 {
 	GtkTextBuffer *text_buf;
-	char buf[1024];
 	gchar *answer;
 
 	fd_lookup_context_destroy(&lookup_ctx);
@@ -157,8 +156,7 @@ static void update_content(const gchar *text, const gchar *context)
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_content));
 	fd_lookup_exec(&lookup_ctx);
 	answer = fd_lookup_context_build_answer(&lookup_ctx);
-	sprintf(buf, "%s", answer);
-	gtk_text_buffer_set_text(text_buf, buf, -1);
+	gtk_text_buffer_set_text(text_buf, answer, -1);
 	/* show context */
 	context = fd_lookup_context_build_context(&lookup_ctx);
 	text_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_context));
