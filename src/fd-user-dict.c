@@ -112,12 +112,14 @@ int fd_user_dict_add(gchar *word, gchar *answer, gchar *context)
 		return -1;
 
 	if (fd_user_dict_lookup(word, &r)) {
+		context = g_strconcat(context, "\n@ ", ctime(&r.Time), r.Context, NULL);
 		r.Count++;
 		sql = sqlite3_mprintf("UPDATE UserDict SET Time=%d,Context=%Q,Answer=%Q,Count=%d WHERE Word=%Q",
 				time(NULL), context, answer, r.Count, word);
 		fd_user_dict_record_free(&r);
 		rc = sqlite3_exec(db, sql, update_callback, 0, &errmsg);
 		sqlite3_free(sql);
+		g_free(context);
 		if (rc != SQLITE_OK) {
 			g_print("sql exec update failed! (%s)\n", errmsg);
 			sqlite3_free(errmsg);

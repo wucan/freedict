@@ -97,7 +97,7 @@ const gchar * fd_lookup_context_build_context(struct fd_lookup_context *ctx)
 		struct fd_user_dict_record *urec;
 		GList *first = g_list_first(ctx->user_dict_answers);
 		urec = (struct fd_user_dict_record *)first->data;
-		ctx->build_context = g_strconcat(ctime(&urec->Time), urec->Context, NULL);
+		ctx->build_context = g_strconcat("@ ", ctime(&urec->Time), urec->Context, NULL);
 	} else {
 		ctx->build_context = g_strdup(ctx->context);
 	}
