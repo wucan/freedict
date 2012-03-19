@@ -61,8 +61,15 @@ static void entry_word_changed(GtkEditable *editable, gpointer user_data)
 		return;
 
 	word = gtk_entry_get_text(entry_word);
-	if (word && word[0])
-		update_content(word, "User Input");
+	if (word && word[0]) {
+		if (lookup_ctx.context) {
+			char *context = g_strdup(lookup_ctx.context);
+			update_content(word, context);
+			g_free(context);
+		} else {
+			update_content(word, "User Input");
+		}
+	}
 }
 
 static gboolean entry_word_focus_in_event(GtkWidget *widget,
