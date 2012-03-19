@@ -252,6 +252,8 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 
 	/* remove leading evil chars */
 	for (i = 0; i < len; i++) {
+		if (tmp_words[i] & 0x80)
+			break;
 		if (g_ascii_ispunct(tmp_words[i]) || !g_ascii_isgraph(tmp_words[i]))
 			tmp_words[i] = 0;
 		else
@@ -263,6 +265,8 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 
 	/* remove trailling evil chars */
 	for (i = len - 1; i >= 0; i--) {
+		if (tmp_words[i] & 0x80)
+			break;
 		if (g_ascii_ispunct(cwords[i]) || !g_ascii_isgraph(cwords[i]))
 			cwords[i] = 0;
 		else
