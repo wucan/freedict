@@ -132,8 +132,8 @@ gchar * fd_utils_x11_get_active_window_title_v2()
 		g_print("XGetWindowProperty failed! (%d)\n", status);
 	}
 
-	g_print("type %d, format %d, nitems %d, nbytes_after %d, prop %p\n",
-		type, format, nitems, nbytes_after, prop);
+	//g_print("type %d, format %d, nitems %d, nbytes_after %d, prop %p\n",
+	//	type, format, nitems, nbytes_after, prop);
 	switch (format) {
 		case 32: nbytes = sizeof(long); break;
 		case 16: nbytes = sizeof(short); break;
