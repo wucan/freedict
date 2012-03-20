@@ -40,6 +40,12 @@ static void receiver_func(GtkClipboard *clipboard,
 		return;
 	}
 
+	/* discard it if too big! (> 32 seems bigger!) */
+	if (strlen(text) > 32) {
+		rearm = TRUE;
+		return;
+	}
+
 	if (recv_text && strcmp(recv_text, text) == 0) {
 		rearm = TRUE;
 		return;
