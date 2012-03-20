@@ -80,13 +80,14 @@ static int insert_callback(void *data, int argc, char **argv, char *colname)
 gboolean fd_user_dict_lookup(gchar *word, struct fd_user_dict_record *r)
 {
 	int rc;
-	char sql[1024];
+	char *sql;
 	char *errmsg = NULL;
 
 	r->Count = 0;
 
-	sprintf(sql, "SELECT * FROM UserDict WHERE Word=\'%s\'", word);
+	sql = sqlite3_mprintf("SELECT * FROM UserDict WHERE Word=%Q", word);
 	rc = sqlite3_exec(db, sql, select_callback, r, &errmsg);
+	sqlite3_free(sql);
 	if (rc != SQLITE_OK) {
 		g_print("sql exec select failed! (%s)\n", errmsg);
 		sqlite3_free(errmsg);
