@@ -56,6 +56,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="use_action_appearance">False</property>
+            <property name="width_request">50</property>
             <signal name="clicked" handler="button_save_clicked" swapped="no"/>
           </object>
           <packing>
@@ -71,6 +72,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="use_action_appearance">False</property>
+            <property name="width_request">50</property>
           </object>
           <packing>
             <property name="x">320</property>
