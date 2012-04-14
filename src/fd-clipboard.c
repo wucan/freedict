@@ -61,7 +61,11 @@ static void receiver_func(GtkClipboard *clipboard,
 
 	if (recv_text) {
 		gchar *context = fd_utils_get_active_window_title();
-		fd_stage_show(recv_text, context);
+		if (context && strcmp(context, "Run Program...") == 0) {
+			/* ignore xfce's "Run Program..." dialog */
+		} else {
+			fd_stage_show(recv_text, context);
+		}
 		g_free(context);
 	}
 
