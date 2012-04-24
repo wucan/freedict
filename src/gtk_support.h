@@ -19,8 +19,6 @@ GtkWidget *create_menu_item(const char *name, const char *label,
 		gpointer data, void (*menu_item_activate_cb)(gpointer user_data));
 GtkWidget *create_stock_menu_item(const char *name, const gchar *stock_id,
 		gpointer data, void (*menu_item_activate_cb)(gpointer user_data));
-GtkWidget *create_check_menu_item(const char *name, const char *label,
-		void (*toggled_callbacker)(GtkCheckMenuItem *item));
 
 
 #endif /* _GTK_SUPPORT_H_ */

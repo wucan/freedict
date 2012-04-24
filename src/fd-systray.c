@@ -33,9 +33,16 @@ static GtkWidget *create_main_menu()
 	preferences_item = create_stock_menu_item("preferences_item",
 		GTK_STOCK_PREFERENCES, NULL, preferences_menu_item_activate_cb);
 	gtk_menu_append(GTK_MENU(menu), preferences_item);
-	pickable_item = create_check_menu_item("pickable_item", "Pickable",
-			pickable_menu_item_toggled_cb);
+
+	/* pickable menu item */
+	pickable_item = gtk_check_menu_item_new_with_label("Pickable");
+	gtk_check_menu_item_set_active((GtkCheckMenuItem *)pickable_item, TRUE);
+	gtk_check_menu_item_set_show_toggle((GtkCheckMenuItem *)pickable_item, TRUE);
+	gtk_signal_connect_object((gpointer)pickable_item, "toggled",
+		GTK_SIGNAL_FUNC(pickable_menu_item_toggled_cb), pickable_item);
+	gtk_widget_show(pickable_item);
 	gtk_menu_append(GTK_MENU(menu), pickable_item);
+
 	quit_item = create_menu_item("quit_item", "Quit",
 			NULL, quit_menu_item_activate_cb);
 	gtk_menu_append(GTK_MENU(menu), quit_item);
