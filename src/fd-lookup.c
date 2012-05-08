@@ -228,6 +228,13 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 					tmp_words[words_len - 2] = 'l';
 				}
 				break;
+			case 6:
+				if (g_str_has_suffix(tmp_words, "or")) {
+					tmp_words[words_len - 2] = 0;
+					got = lookup(lookup_ctx, tmp_words);
+					tmp_words[words_len - 2] = 'o';
+				}
+				break;
 			default:
 				return NULL;
 				break;
