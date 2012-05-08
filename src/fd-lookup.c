@@ -226,6 +226,13 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 						got = lookup(lookup_ctx, tmp_words);
 						tmp_words[words_len - 2] = 'e';
 					}
+					/* search for style: expelled */
+					if (!got && (words_len > 4) &&
+						tmp_words[words_len - 3] == tmp_words[words_len - 4]) {
+						tmp_words[words_len - 3] = 0;
+						got = lookup(lookup_ctx, tmp_words);
+						tmp_words[words_len - 3] = tmp_words[words_len - 4];
+					}
 				}
 				break;
 			case 5:
