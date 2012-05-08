@@ -65,6 +65,13 @@ static void build_func(gpointer data, gpointer user_data)
 	struct fd_dict_record *rec = data;
 	gchar *new_result;
 
+	/*
+	 * prepend target key words
+	 */
+	if (strcmp(ctx->words, rec->words))
+		ctx->result_answer = g_strconcat(ctx->result_answer ? ctx->result_answer : "",
+			"<", rec->words, ">\n", NULL);
+
 	new_result = g_strconcat(ctx->result_answer ? ctx->result_answer : "",
 			rec->answer, NULL);
 	ctx->result_answer = new_result;
