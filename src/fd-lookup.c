@@ -299,6 +299,13 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 	gchar *cwords;
 	int len;
 	int i;
+	GTimer *timer = NULL;
+
+	if (!timer)
+		timer = g_timer_new();
+
+
+	g_timer_start(timer);
 
 	/*
 	 * NOTE: g_strstrip() don't create new one!
@@ -374,6 +381,11 @@ gboolean fd_lookup_exec(struct fd_lookup_context *lookup_ctx)
 	}
 
 	g_free(dup_words);
+
+	g_timer_stop(timer);
+
+	printf("lookup \"%s\" take %f sec.\n",
+		lookup_ctx->words, g_timer_elapsed(timer, NULL));
 
 	return TRUE;
 }
