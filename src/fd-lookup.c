@@ -152,7 +152,7 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 	got = lookup(lookup_ctx, words);
 	if (!got) {
 		int words_len = strlen(words);
-		gchar *tmp_words = g_strdup(words);
+		gchar *tmp_words = words;
 		int suffix_idx = -1;
 
 		do {
@@ -286,8 +286,6 @@ done:
 prefix_check_done:
 			;
 		}
-
-		g_free(tmp_words);
 	}
 
 	return got;
