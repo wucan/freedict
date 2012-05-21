@@ -249,6 +249,13 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 					tmp_words[words_len - 2] = 'o';
 				}
 				break;
+			case 7:
+				if (g_str_has_suffix(tmp_words, "ness")) {
+					tmp_words[words_len - 4] = 0;
+					got = do_lookup(lookup_ctx, tmp_words);
+					tmp_words[words_len - 4] = 'n';
+				}
+				break;
 			default:
 				return NULL;
 				break;
