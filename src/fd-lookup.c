@@ -257,12 +257,36 @@ static gchar * do_lookup(struct fd_loookup_context *lookup_ctx,
 				}
 				break;
 			default:
-				return NULL;
+				goto done;
 				break;
 			}
 			suffix_idx++;
 		} while (!got);
 done:
+
+		/*
+		 * check prefix
+		 */
+		if (!got) {
+			int prefix_idx = -1;
+
+			do {
+				switch (prefix_idx) {
+				case -1:
+					if (g_str_has_prefix(tmp_words, "un")) {
+						got = do_lookup(lookup_ctx, tmp_words + 2);
+					}
+					break;
+				default:
+					goto prefix_check_done;
+					break;
+				}
+				prefix_idx++;
+			} while (!got);
+prefix_check_done:
+			;
+		}
+
 		g_free(tmp_words);
 	}
 
