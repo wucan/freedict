@@ -1,7 +1,7 @@
 #ifndef _FD_COMMON_H_
 #define _FD_COMMON_H_
 
-#include <glib/glist.h>
+#include <glib.h>
 
 
 struct fd_dict {
